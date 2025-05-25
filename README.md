@@ -1,5 +1,30 @@
 # 🍕 Pizza Management Dashboard
 
+## 🚀 Live Demo
+
+**Live URL:** [https://pizza-management-99kz.vercel.app](https://pizza-management-99kz.vercel.app)
+
+## 👤 Author
+
+**Name:** Yankit Rajor  
+**GitHub Repo:** [https://github.com/Yankit7039/pizza-management](https://github.com/Yankit7039/pizza-management)
+
+---
+
+## 📝 Project Overview
+
+This is a **Pizza Management Dashboard** built with **Next.js 14**, **TypeScript**, and **NextAuth.js**. It features a Google OAuth-based authentication system and a protected dashboard layout for managing pizza orders and related activities.
+
+The project includes:
+- Google OAuth authentication via NextAuth
+- Protected routes and session-based access control
+- A dynamic dashboard interface
+- Deployed on **Vercel** for easy access and performance
+
+---
+
+# 🍕 Pizza Management Dashboard
+
 A feature-rich, full-stack dashboard application for managing pizza products, customer orders, and inventory. Built using **Next.js**, **React**, **NextAuth**, and modern UI tools to provide a seamless user experience for both admins and users.
 
 ---
