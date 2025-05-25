@@ -15,9 +15,9 @@ import {
   Star,
   ArrowUpRight,
   ArrowDownRight,
+  ChevronRight,
 } from "lucide-react"
-import { ChartTooltip } from "@/components/ui/chart"
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts"
 
 const salesData = [
   { name: "Mon", sales: 1200, orders: 45 },
@@ -35,17 +35,6 @@ const pizzaData = [
   { name: "Veggie", value: 20, color: "#45b7d1" },
   { name: "Meat Lovers", value: 17, color: "#96ceb4" },
 ]
-
-const chartConfig = {
-  sales: {
-    label: "Sales",
-    color: "hsl(var(--chart-1))",
-  },
-  orders: {
-    label: "Orders",
-    color: "hsl(var(--chart-2))",
-  },
-}
 
 export default function Dashboard() {
   const { data: session } = useSession()
@@ -135,263 +124,315 @@ export default function Dashboard() {
     Pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
   }
 
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="p-3 bg-gray-900 border border-gray-800 rounded-lg shadow-lg">
+          <p className="text-gray-300 mb-1">{label}</p>
+          <p className="text-green-400 font-medium">₹{payload[0].value}</p>
+          {payload[1] && (
+            <p className="text-blue-400 font-medium">{payload[1].value} orders</p>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
-    <div className="min-h-screen bg-black">
-      <div className="space-y-8 animate-fade-in p-6 bg-black">
-        {/* Welcome Section - Fixed to Black */}
-        <Card className="bg-black border-gray-800 shadow-lg">
-          <CardContent className="p-8">
-            <div className="max-w-2xl">
-              <h1 className="text-3xl font-bold mb-2 text-white">
-                Welcome back, {session?.user?.name?.split(" ")[0] || "Chef"}! 👋
-              </h1>
-              <p className="text-gray-400 text-lg">
-                Your pizza empire is thriving! Here's what's cooking in your business today.
-              </p>
+    <div className="space-y-8 animate-fade-in">
+      {/* Welcome Section */}
+      <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+        <CardContent className="p-6 sm:p-8">
+          <div className="max-w-2xl">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-white">
+              Welcome back, {session?.user?.name?.split(" ")[0] || "Chef"}! 👋
+            </h1>
+            <p className="text-gray-400 mb-6">
+              Here's what's happening with your pizza business today.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {stats.map((stat, i) => (
+          <Card key={i} className="border-gray-800 shadow-lg bg-gray-900/50">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm font-medium text-gray-400 mb-1">{stat.title}</p>
+                  <div className="flex items-baseline space-x-2">
+                    <h3 className="text-2xl font-bold text-white">{stat.value}</h3>
+                    <div
+                      className={`flex items-center text-xs font-medium ${
+                        stat.trend === "up" ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
+                      {stat.trend === "up" ? (
+                        <ArrowUpRight className="h-3 w-3 mr-1" />
+                      ) : (
+                        <ArrowDownRight className="h-3 w-3 mr-1" />
+                      )}
+                      {stat.change}
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">{stat.description}</p>
+                </div>
+                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
+        {/* Sales Chart */}
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50 lg:col-span-5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-white text-lg">Sales Overview</CardTitle>
+            <CardDescription className="text-gray-400">
+              Weekly sales and orders
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={salesData}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="ordersGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#9ca3af', fontSize: 12 }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#9ca3af', fontSize: 12 }}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area
+                    type="monotone"
+                    dataKey="sales"
+                    stroke="#22c55e"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#salesGradient)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="orders"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#ordersGradient)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex items-center justify-center mt-2 space-x-8">
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                <span className="text-sm text-gray-400">Sales</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                <span className="text-sm text-gray-400">Orders</span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <Card key={stat.title} className="bg-black border-gray-800 shadow-lg">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-400">{stat.title}</p>
-                    <p className="text-3xl font-bold text-white">{stat.value}</p>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                          stat.trend === "up"
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                            : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
-                        }`}
-                      >
-                        {stat.trend === "up" ? (
-                          <ArrowUpRight className="w-3 h-3" />
-                        ) : (
-                          <ArrowDownRight className="w-3 h-3" />
-                        )}
-                        {stat.change}
-                      </div>
-                      <span className="text-xs text-gray-400">{stat.description}</span>
-                    </div>
+        {/* Top Pizzas Chart */}
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50 lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-white text-lg">Top Pizzas</CardTitle>
+            <CardDescription className="text-gray-400">
+              Best selling pizzas
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[250px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pizzaData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    {pizzaData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="p-2 bg-gray-900 border border-gray-800 rounded-lg shadow-lg">
+                            <p className="text-white font-medium">{payload[0].name}</p>
+                            <p className="text-gray-400">{payload[0].value}%</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="space-y-2 mt-4">
+              {pizzaData.map((pizza, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div
+                      className="w-3 h-3 rounded-full mr-2"
+                      style={{ backgroundColor: pizza.color }}
+                    ></div>
+                    <span className="text-sm text-gray-300">{pizza.name}</span>
                   </div>
-                  <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center`}>
-                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Sales Chart - Fixed */}
-          <Card className="bg-black border-gray-800 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <TrendingUp className="w-5 h-5" />
-                Weekly Sales Overview
-              </CardTitle>
-              <CardDescription className="text-gray-400">Sales and orders for the past week</CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={salesData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                    <XAxis dataKey="name" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis
-                      stroke="#6b7280"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={(value) => `₹${value}`}
-                    />
-                    <ChartTooltip
-                      content={({ active, payload, label }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="bg-black border border-gray-800 rounded-lg p-3 shadow-lg">
-                              <p className="font-medium text-white">{label}</p>
-                              <p className="text-sm text-blue-400">Sales: ₹{payload[0].value}</p>
-                            </div>
-                          )
-                        }
-                        return null
-                      }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="sales"
-                      stroke="#3b82f6"
-                      fill="#3b82f6"
-                      fillOpacity={0.2}
-                      strokeWidth={2}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Pizza Popularity */}
-          <Card className="bg-black border-gray-800 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Pizza className="w-5 h-5" />
-                Popular Pizzas
-              </CardTitle>
-              <CardDescription className="text-gray-400">Most ordered pizzas this month</CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="h-[300px] flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pizzaData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={120}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {pizzaData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <ChartTooltip
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="bg-black border border-gray-800 rounded-lg p-2 shadow-lg">
-                              <p className="font-medium text-white">{payload[0].payload.name}</p>
-                              <p className="text-sm text-gray-400">{payload[0].value}% of orders</p>
-                            </div>
-                          )
-                        }
-                        return null
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                {pizzaData.map((pizza, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: pizza.color }} />
-                    <span className="text-sm font-medium text-white">{pizza.name}</span>
-                    <span className="text-sm text-gray-400 ml-auto">{pizza.value}%</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity & Quick Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Orders */}
-          <Card className="bg-black border-gray-800 shadow-lg lg:col-span-2">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2 text-white">
-                  <ShoppingCart className="w-5 h-5" />
-                  Recent Orders
-                </CardTitle>
-                <CardDescription className="text-gray-400">Latest orders from your customers</CardDescription>
-              </div>
-              <Button variant="outline" size="sm" className="border-gray-800 text-white hover:bg-gray-800">
-                View All
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between p-4 bg-gray-900 rounded-lg">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center">
-                      <Pizza className="w-5 h-5 text-orange-500" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-white">{order.customer}</p>
-                      <p className="text-sm text-gray-400">
-                        {order.pizza} • {order.id}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right space-y-1">
-                    <Badge className={statusColors[order.status as keyof typeof statusColors]} variant="secondary">
-                      {order.status}
-                    </Badge>
-                    <p className="text-sm font-medium text-white">{order.amount}</p>
-                    <p className="text-xs text-gray-400">{order.time}</p>
-                  </div>
+                  <span className="text-sm font-medium text-white">{pizza.value}%</span>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-          {/* Performance Metrics */}
-          <Card className="bg-black border-gray-800 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Star className="w-5 h-5" />
-                Performance
-              </CardTitle>
-              <CardDescription className="text-gray-400">Key business metrics</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Customer Satisfaction</span>
-                  <span className="font-medium text-white">4.8/5</span>
-                </div>
-                <Progress value={96} className="h-2" />
-              </div>
+      {/* Orders and Performance */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Orders */}
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50 lg:col-span-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <div>
+              <CardTitle className="text-white text-lg">Recent Orders</CardTitle>
+              <CardDescription className="text-gray-400">
+                Latest pizza orders
+              </CardDescription>
+            </div>
+            <Button
+              variant="ghost"
+              className="text-gray-400 hover:text-white"
+            >
+              View all
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-800">
+                    <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-gray-400 font-medium">Order ID</th>
+                    <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-gray-400 font-medium">Customer</th>
+                    <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-gray-400 font-medium">Pizza</th>
+                    <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-gray-400 font-medium">Status</th>
+                    <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-gray-400 font-medium">Amount</th>
+                    <th className="text-left py-3 px-4 text-xs uppercase tracking-wider text-gray-400 font-medium">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentOrders.map((order, i) => (
+                    <tr
+                      key={i}
+                      className="border-b border-gray-800 hover:bg-gray-800/30 transition-colors"
+                    >
+                      <td className="py-3 px-4 text-sm text-white">{order.id}</td>
+                      <td className="py-3 px-4 text-sm text-white">{order.customer}</td>
+                      <td className="py-3 px-4 text-sm text-white">{order.pizza}</td>
+                      <td className="py-3 px-4">
+                        <Badge
+                          variant="outline"
+                          className={statusColors[order.status]}
+                        >
+                          {order.status}
+                        </Badge>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-white">{order.amount}</td>
+                      <td className="py-3 px-4 text-sm text-gray-400">{order.time}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
 
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Order Accuracy</span>
-                  <span className="font-medium text-white">98.5%</span>
-                </div>
-                <Progress value={98.5} className="h-2" />
+        {/* Performance Metrics */}
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-white text-lg">Performance</CardTitle>
+            <CardDescription className="text-gray-400">
+              Key performance metrics
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Customer Satisfaction</span>
+                <span className="font-medium text-white">4.8/5</span>
               </div>
+              <Progress value={96} className="h-2" />
+            </div>
 
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">On-time Delivery</span>
-                  <span className="font-medium text-white">94.2%</span>
-                </div>
-                <Progress value={94.2} className="h-2" />
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Order Accuracy</span>
+                <span className="font-medium text-white">98.5%</span>
               </div>
+              <Progress value={98.5} className="h-2" />
+            </div>
 
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Kitchen Efficiency</span>
-                  <span className="font-medium text-white">91.8%</span>
-                </div>
-                <Progress value={91.8} className="h-2" />
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">On-time Delivery</span>
+                <span className="font-medium text-white">94.2%</span>
               </div>
+              <Progress value={94.2} className="h-2" />
+            </div>
 
-              <div className="pt-4 border-t border-gray-800">
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <p className="text-2xl font-bold text-white">47</p>
-                    <p className="text-xs text-gray-400">Orders Today</p>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-white">12</p>
-                    <p className="text-xs text-gray-400">In Kitchen</p>
-                  </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Kitchen Efficiency</span>
+                <span className="font-medium text-white">91.8%</span>
+              </div>
+              <Progress value={91.8} className="h-2" />
+            </div>
+
+            <div className="pt-4 border-t border-gray-800">
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div>
+                  <p className="text-2xl font-bold text-white">47</p>
+                  <p className="text-xs text-gray-400">Orders Today</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-white">12</p>
+                  <p className="text-xs text-gray-400">In Kitchen</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

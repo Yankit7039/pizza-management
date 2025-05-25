@@ -1,218 +1,446 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Plus, Package, AlertTriangle, Filter } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Progress } from "@/components/ui/progress"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  PackageOpen,
+  Plus,
+  Filter,
+  ArrowDownUp,
+  Search,
+  RefreshCw,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  Download,
+  FileText,
+  ChevronRight,
+  ArrowUpRight,
+  ChevronDown,
+  AlertTriangle,
+} from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
-// Mock inventory data
+// Sample inventory data
 const inventoryItems = [
   {
     id: 1,
-    name: "Pizza Dough",
-    category: "Base",
+    name: "Tomato Sauce",
+    category: "Sauce",
     currentStock: 45,
     minStock: 20,
     maxStock: 100,
     unit: "kg",
-    costPerUnit: 65,
-    supplier: "Delhi Fresh Ingredients Pvt Ltd",
-    lastRestocked: "2024-01-10",
+    costPerUnit: 85,
+    supplier: "Fresh Farms Ltd.",
+    lastRestocked: "2025-05-10",
     status: "In Stock",
   },
   {
     id: 2,
     name: "Mozzarella Cheese",
-    category: "Cheese",
-    currentStock: 8,
+    category: "Dairy",
+    currentStock: 18,
     minStock: 15,
     maxStock: 50,
     unit: "kg",
     costPerUnit: 320,
-    supplier: "Amul Dairy Products",
-    lastRestocked: "2024-01-08",
+    supplier: "Dairy Delights",
+    lastRestocked: "2025-05-15",
     status: "Low Stock",
   },
   {
     id: 3,
-    name: "Tomato Sauce",
-    category: "Sauce",
-    currentStock: 25,
-    minStock: 10,
-    maxStock: 40,
-    unit: "L",
-    costPerUnit: 95,
-    supplier: "Kissan Food Products",
-    lastRestocked: "2024-01-12",
+    name: "Pizza Dough",
+    category: "Base",
+    currentStock: 56,
+    minStock: 30,
+    maxStock: 100,
+    unit: "kg",
+    costPerUnit: 110,
+    supplier: "Flour Mills Inc.",
+    lastRestocked: "2025-05-12",
     status: "In Stock",
   },
   {
     id: 4,
-    name: "Chicken Tikka",
+    name: "Pepperoni",
     category: "Meat",
-    currentStock: 2,
-    minStock: 5,
-    maxStock: 20,
+    currentStock: 8,
+    minStock: 10,
+    maxStock: 30,
     unit: "kg",
-    costPerUnit: 480,
-    supplier: "Licious Fresh Meats",
-    lastRestocked: "2024-01-05",
+    costPerUnit: 450,
+    supplier: "Premium Meats",
+    lastRestocked: "2025-05-08",
     status: "Critical",
   },
   {
     id: 5,
-    name: "Paneer",
-    category: "Dairy",
+    name: "Black Olives",
+    category: "Vegetable",
     currentStock: 12,
     minStock: 8,
     maxStock: 25,
     unit: "kg",
-    costPerUnit: 280,
-    supplier: "Mother Dairy",
-    lastRestocked: "2024-01-14",
+    costPerUnit: 180,
+    supplier: "Green Garden",
+    lastRestocked: "2025-05-14",
+    status: "In Stock",
+  },
+  {
+    id: 6,
+    name: "Mushrooms",
+    category: "Vegetable",
+    currentStock: 14,
+    minStock: 12,
+    maxStock: 30,
+    unit: "kg",
+    costPerUnit: 210,
+    supplier: "Green Garden",
+    lastRestocked: "2025-05-13",
+    status: "In Stock",
+  },
+  {
+    id: 7,
+    name: "Bell Peppers",
+    category: "Vegetable",
+    currentStock: 9,
+    minStock: 10,
+    maxStock: 25,
+    unit: "kg",
+    costPerUnit: 160,
+    supplier: "Fresh Farms Ltd.",
+    lastRestocked: "2025-05-11",
+    status: "Low Stock",
+  },
+  {
+    id: 8,
+    name: "Oregano",
+    category: "Spice",
+    currentStock: 5,
+    minStock: 3,
+    maxStock: 10,
+    unit: "kg",
+    costPerUnit: 450,
+    supplier: "Spice World",
+    lastRestocked: "2025-05-05",
     status: "In Stock",
   },
 ]
 
+// Status color mapping
+const statusColors = {
+  "In Stock": "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+  "Low Stock": "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+  "Critical": "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+}
+
 export default function InventoryPage() {
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState("All")
+  const [statusFilter, setStatusFilter] = useState("All")
+  const [showLowStock, setShowLowStock] = useState(false)
 
-  const filteredItems = inventoryItems.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  // Filter items based on search, category, and status
+  const filteredItems = inventoryItems
+    .filter(item => 
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.supplier.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .filter(item => categoryFilter === "All" || item.category === categoryFilter)
+    .filter(item => statusFilter === "All" || item.status === statusFilter)
+    .filter(item => !showLowStock || item.status !== "In Stock")
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "In Stock":
-        return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
-      case "Low Stock":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400"
-      case "Critical":
-        return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400"
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400"
-    }
-  }
-
-  const getStockPercentage = (current: number, max: number) => {
-    return (current / max) * 100
-  }
-
-  const lowStockItems = inventoryItems.filter((item) => item.currentStock <= item.minStock)
-  const totalValue = inventoryItems.reduce((sum, item) => sum + item.currentStock * item.costPerUnit, 0)
+  // Get unique categories for filter
+  const categories = ["All", ...new Set(inventoryItems.map(item => item.category))]
+  
+  // Get inventory summary
+  const totalItems = inventoryItems.length
+  const lowStockItems = inventoryItems.filter(item => item.status === "Low Stock").length
+  const criticalItems = inventoryItems.filter(item => item.status === "Critical").length
+  const totalValue = inventoryItems.reduce((sum, item) => sum + (item.currentStock * item.costPerUnit), 0)
 
   return (
-    <div className="space-y-6 p-4 sm:p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-8 animate-fade-in">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Inventory Management</h1>
-          <p className="text-muted-foreground mt-1">Track and manage your ingredient inventory</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Inventory Management</h1>
+          <p className="text-gray-400 mt-1">Track and manage your pizza ingredients</p>
         </div>
-        <Button className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Item
-        </Button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <Card className="border-0 shadow-sm bg-card/50 backdrop-blur">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Items</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-foreground">{inventoryItems.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">Active inventory items</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-sm bg-card/50 backdrop-blur">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Low Stock Alerts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-red-600">{lowStockItems.length}</div>
-            <p className="text-xs text-red-600 mt-1">Items need restocking</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-sm bg-card/50 backdrop-blur">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Value</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-foreground">₹{totalValue.toFixed(2)}</div>
-            <p className="text-xs text-green-600 mt-1">Current inventory value</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-sm bg-card/50 backdrop-blur">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Categories</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-foreground">5</div>
-            <p className="text-xs text-muted-foreground mt-1">Product categories</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Low Stock Alerts */}
-      {lowStockItems.length > 0 && (
-        <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10">
-          <CardHeader>
-            <CardTitle className="text-red-800 dark:text-red-400 flex items-center">
-              <AlertTriangle className="w-5 h-5 mr-2" />
-              Low Stock Alerts
-            </CardTitle>
-            <CardDescription className="text-red-600 dark:text-red-400">
-              The following items need immediate restocking
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {lowStockItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-white dark:bg-background rounded-lg gap-2"
-                >
-                  <div>
-                    <span className="font-medium text-foreground">{item.name}</span>
-                    <span className="text-sm text-muted-foreground ml-2">
-                      {item.currentStock} {item.unit} remaining
-                    </span>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90">
+                <Plus className="h-4 w-4 mr-2" />
+                Add New Item
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-gray-900 border-gray-800 text-white sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add Inventory Item</DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  Add a new item to your inventory.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-white">Item Name</Label>
+                    <Input id="name" placeholder="e.g., Mozzarella Cheese" className="bg-gray-800 border-gray-700" />
                   </div>
-                  <Button size="sm" variant="outline" className="w-full sm:w-auto">
-                    Restock Now
-                  </Button>
+                  <div className="space-y-2">
+                    <Label htmlFor="category" className="text-white">Category</Label>
+                    <Select>
+                      <SelectTrigger className="bg-gray-800 border-gray-700">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-700">
+                        <SelectItem value="sauce">Sauce</SelectItem>
+                        <SelectItem value="dairy">Dairy</SelectItem>
+                        <SelectItem value="meat">Meat</SelectItem>
+                        <SelectItem value="vegetable">Vegetable</SelectItem>
+                        <SelectItem value="base">Base</SelectItem>
+                        <SelectItem value="spice">Spice</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              ))}
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="current" className="text-white">Current Stock</Label>
+                    <Input id="current" type="number" placeholder="0" className="bg-gray-800 border-gray-700" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="min" className="text-white">Min Stock</Label>
+                    <Input id="min" type="number" placeholder="0" className="bg-gray-800 border-gray-700" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="max" className="text-white">Max Stock</Label>
+                    <Input id="max" type="number" placeholder="0" className="bg-gray-800 border-gray-700" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="unit" className="text-white">Unit</Label>
+                    <Select>
+                      <SelectTrigger className="bg-gray-800 border-gray-700">
+                        <SelectValue placeholder="Select unit" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-700">
+                        <SelectItem value="kg">kg</SelectItem>
+                        <SelectItem value="g">g</SelectItem>
+                        <SelectItem value="l">l</SelectItem>
+                        <SelectItem value="ml">ml</SelectItem>
+                        <SelectItem value="units">units</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cost" className="text-white">Cost per Unit (₹)</Label>
+                    <Input id="cost" type="number" placeholder="0" className="bg-gray-800 border-gray-700" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="supplier" className="text-white">Supplier</Label>
+                  <Input id="supplier" placeholder="e.g., Dairy Delights" className="bg-gray-800 border-gray-700" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" className="border-gray-700 text-white hover:bg-gray-800">Cancel</Button>
+                <Button className="bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90">Add Item</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="border-gray-700 text-white hover:bg-gray-800">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+                <ChevronDown className="h-4 w-4 ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-gray-900 border-gray-800 text-white">
+              <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                <FileText className="h-4 w-4 mr-2" />
+                Export as CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                <FileText className="h-4 w-4 mr-2" />
+                Export as PDF
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Inventory Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">Total Items</p>
+                <h3 className="text-2xl font-bold text-white">{totalItems}</h3>
+                <p className="text-xs text-gray-400 mt-1">Across {categories.length - 1} categories</p>
+              </div>
+              <div className="p-2 rounded-lg bg-gray-800">
+                <PackageOpen className="h-6 w-6 text-blue-500" />
+              </div>
             </div>
           </CardContent>
         </Card>
-      )}
 
-      {/* Inventory Table */}
-      <Card className="border-0 shadow-sm bg-card/50 backdrop-blur">
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="text-foreground">Inventory Items</CardTitle>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Search inventory..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-full sm:w-64 bg-background/50 border-border/50"
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">Low Stock Items</p>
+                <h3 className="text-2xl font-bold text-white">{lowStockItems}</h3>
+                <p className="text-xs text-gray-400 mt-1">Need attention soon</p>
+              </div>
+              <div className="p-2 rounded-lg bg-yellow-900/20">
+                <AlertTriangle className="h-6 w-6 text-yellow-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">Critical Items</p>
+                <h3 className="text-2xl font-bold text-white">{criticalItems}</h3>
+                <p className="text-xs text-gray-400 mt-1">Require immediate restocking</p>
+              </div>
+              <div className="p-2 rounded-lg bg-red-900/20">
+                <AlertTriangle className="h-6 w-6 text-red-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">Total Value</p>
+                <h3 className="text-2xl font-bold text-white">₹{totalValue.toLocaleString()}</h3>
+                <p className="text-xs text-gray-400 mt-1">Current inventory value</p>
+              </div>
+              <div className="p-2 rounded-lg bg-green-900/20">
+                <ArrowUpRight className="h-6 w-6 text-green-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Inventory Table Card */}
+      <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <CardTitle className="text-xl text-white">Inventory Items</CardTitle>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <div className="relative w-full sm:w-auto">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <Input 
+                  placeholder="Search items..." 
+                  className="pl-9 bg-gray-800 border-gray-700 text-white w-full sm:w-[200px] lg:w-[300px]"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
+              
+              <div className="flex gap-3 w-full sm:w-auto">
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white w-full sm:w-[130px]">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-900 border-gray-800 text-white">
+                    {categories.map(category => (
+                      <SelectItem key={category} value={category}>{category}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white w-full sm:w-[130px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-900 border-gray-800 text-white">
+                    <SelectItem value="All">All</SelectItem>
+                    <SelectItem value="In Stock">In Stock</SelectItem>
+                    <SelectItem value="Low Stock">Low Stock</SelectItem>
+                    <SelectItem value="Critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-gray-700 text-white hover:bg-gray-800"
+                onClick={() => {
+                  setSearchQuery("")
+                  setCategoryFilter("All")
+                  setStatusFilter("All")
+                  setShowLowStock(false)
+                }}
+              >
+                <RefreshCw className="h-4 w-4" />
+                <span className="sr-only">Reset filters</span>
               </Button>
             </div>
           </div>
@@ -221,71 +449,96 @@ export default function InventoryPage() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-border/50">
-                  <TableHead className="text-foreground">Item</TableHead>
-                  <TableHead className="text-foreground hidden sm:table-cell">Category</TableHead>
-                  <TableHead className="text-foreground">Stock Level</TableHead>
-                  <TableHead className="text-foreground hidden md:table-cell">Status</TableHead>
-                  <TableHead className="text-foreground">Cost/Unit</TableHead>
-                  <TableHead className="text-foreground hidden lg:table-cell">Total Value</TableHead>
-                  <TableHead className="text-foreground hidden xl:table-cell">Supplier</TableHead>
-                  <TableHead className="text-foreground hidden xl:table-cell">Last Restocked</TableHead>
+                <TableRow className="border-gray-800 hover:bg-transparent">
+                  <TableHead className="text-gray-400 w-[250px]">Item Name</TableHead>
+                  <TableHead className="text-gray-400">Category</TableHead>
+                  <TableHead className="text-gray-400 text-right">Current Stock</TableHead>
+                  <TableHead className="text-gray-400 text-right">Min Stock</TableHead>
+                  <TableHead className="text-gray-400 text-right">Cost per Unit</TableHead>
+                  <TableHead className="text-gray-400 hidden lg:table-cell">Supplier</TableHead>
+                  <TableHead className="text-gray-400 hidden md:table-cell">Last Restocked</TableHead>
+                  <TableHead className="text-gray-400">Status</TableHead>
+                  <TableHead className="text-gray-400 text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredItems.map((item) => (
-                  <TableRow key={item.id} className="border-border/50 hover:bg-muted/50">
-                    <TableCell>
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center">
-                          <Package className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
-                        </div>
-                        <div>
-                          <div className="font-medium text-foreground text-sm sm:text-base">{item.name}</div>
-                          <div className="text-xs text-muted-foreground">ID: #{item.id}</div>
-                          <div className="sm:hidden text-xs text-muted-foreground">{item.category}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell">
-                      <Badge variant="outline" className="border-border/50">
-                        {item.category}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-foreground">
-                            {item.currentStock} {item.unit}
-                          </span>
-                          <span className="text-muted-foreground">
-                            / {item.maxStock} {item.unit}
-                          </span>
-                        </div>
-                        <Progress value={getStockPercentage(item.currentStock, item.maxStock)} className="h-2" />
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      <Badge className={getStatusColor(item.status)}>{item.status}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="font-medium text-foreground">₹{item.costPerUnit.toFixed(2)}</div>
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell">
-                      <div className="font-medium text-foreground">
-                        ₹{(item.currentStock * item.costPerUnit).toFixed(2)}
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-cell">
-                      <div className="text-sm text-muted-foreground max-w-[150px] truncate">{item.supplier}</div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-cell">
-                      <div className="text-sm text-muted-foreground">{item.lastRestocked}</div>
+                {filteredItems.length > 0 ? (
+                  filteredItems.map((item) => (
+                    <TableRow key={item.id} className="border-gray-800 hover:bg-gray-800/30">
+                      <TableCell className="font-medium text-white">{item.name}</TableCell>
+                      <TableCell className="text-gray-300">{item.category}</TableCell>
+                      <TableCell className="text-right text-white">
+                        {item.currentStock} {item.unit}
+                      </TableCell>
+                      <TableCell className="text-right text-gray-300">
+                        {item.minStock} {item.unit}
+                      </TableCell>
+                      <TableCell className="text-right text-white">₹{item.costPerUnit}</TableCell>
+                      <TableCell className="text-gray-300 hidden lg:table-cell">{item.supplier}</TableCell>
+                      <TableCell className="text-gray-300 hidden md:table-cell">{item.lastRestocked}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={statusColors[item.status]}>
+                          {item.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-gray-900 border-gray-800 text-white">
+                            <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit Item
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                              <RefreshCw className="h-4 w-4 mr-2" />
+                              Restock
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="bg-gray-800" />
+                            <DropdownMenuItem className="text-red-500 hover:bg-gray-800 cursor-pointer">
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={9} className="h-24 text-center text-gray-400">
+                      No items found with the current filters.
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
+          </div>
+          
+          <div className="mt-6">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious className="text-gray-400 hover:text-white" />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink className="text-white bg-gray-800">1</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink className="text-gray-400 hover:text-white">2</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink className="text-gray-400 hover:text-white">3</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext className="text-gray-400 hover:text-white" />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         </CardContent>
       </Card>

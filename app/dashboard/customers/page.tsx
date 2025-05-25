@@ -1,13 +1,63 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Plus, Filter, MoreHorizontal, Phone, Mail, Star } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Users,
+  Plus,
+  Search,
+  RefreshCw,
+  MoreHorizontal,
+  Mail,
+  Phone,
+  MapPin,
+  Edit,
+  Trash2,
+  Download,
+  FileText,
+  ChevronDown,
+  Filter,
+  Star,
+  Clock,
+  ArrowUpRight,
+} from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,328 +66,494 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
 
-// Mock customer data
+// Sample customers data
 const customers = [
   {
     id: 1,
     name: "Rajesh Kumar",
-    email: "rajesh.kumar@email.com",
+    email: "rajesh.kumar@example.com",
     phone: "+91 98765 43210",
-    address: "123 CP Block, Connaught Place, New Delhi, Delhi 110001",
-    totalOrders: 24,
-    totalSpent: 12450.5,
-    lastOrder: "2024-01-15",
+    address: "123 Main Street, Connaught Place, Delhi",
+    totalOrders: 48,
+    totalSpent: 15240,
+    lastOrder: "2025-05-18",
     status: "VIP",
-    rating: 5,
-    joinDate: "2023-03-15",
+    rating: 4.9,
+    joinDate: "2024-09-15",
   },
   {
     id: 2,
     name: "Priya Sharma",
-    email: "priya.sharma@email.com",
+    email: "priya.sharma@example.com",
     phone: "+91 87654 32109",
-    address: "456 Lajpat Nagar, South Delhi, Delhi 110024",
-    totalOrders: 18,
-    totalSpent: 8247.75,
-    lastOrder: "2024-01-12",
+    address: "456 Park Avenue, Bandra, Mumbai",
+    totalOrders: 32,
+    totalSpent: 9850,
+    lastOrder: "2025-05-20",
     status: "Regular",
-    rating: 4,
-    joinDate: "2023-05-22",
+    rating: 4.7,
+    joinDate: "2024-10-22",
   },
   {
     id: 3,
-    name: "Amit Gupta",
-    email: "amit.gupta@email.com",
+    name: "Amit Patel",
+    email: "amit.patel@example.com",
     phone: "+91 76543 21098",
-    address: "789 Karol Bagh, Central Delhi, Delhi 110005",
-    totalOrders: 8,
-    totalSpent: 3956.25,
-    lastOrder: "2024-01-10",
-    status: "New",
-    rating: 4,
-    joinDate: "2023-12-01",
+    address: "789 Lake View, Koramangala, Bangalore",
+    totalOrders: 27,
+    totalSpent: 8320,
+    lastOrder: "2025-05-15",
+    status: "Regular",
+    rating: 4.5,
+    joinDate: "2024-11-10",
   },
   {
     id: 4,
-    name: "Sneha Agarwal",
-    email: "sneha.agarwal@email.com",
+    name: "Deepika Singh",
+    email: "deepika.singh@example.com",
     phone: "+91 65432 10987",
-    address: "321 Dwarka Sector 12, West Delhi, Delhi 110075",
-    totalOrders: 35,
-    totalSpent: 18742.8,
-    lastOrder: "2024-01-14",
+    address: "234 River Road, Salt Lake, Kolkata",
+    totalOrders: 15,
+    totalSpent: 4200,
+    lastOrder: "2025-05-19",
+    status: "New",
+    rating: 4.2,
+    joinDate: "2025-02-18",
+  },
+  {
+    id: 5,
+    name: "Vijay Reddy",
+    email: "vijay.reddy@example.com",
+    phone: "+91 54321 09876",
+    address: "567 Hill View, Jubilee Hills, Hyderabad",
+    totalOrders: 42,
+    totalSpent: 13680,
+    lastOrder: "2025-05-17",
     status: "VIP",
-    rating: 5,
-    joinDate: "2023-01-10",
+    rating: 4.8,
+    joinDate: "2024-08-05",
+  },
+  {
+    id: 6,
+    name: "Ananya Gupta",
+    email: "ananya.gupta@example.com",
+    phone: "+91 43210 98765",
+    address: "890 Beach Road, Panjim, Goa",
+    totalOrders: 9,
+    totalSpent: 2970,
+    lastOrder: "2025-05-12",
+    status: "New",
+    rating: 4.1,
+    joinDate: "2025-03-20",
+  },
+  {
+    id: 7,
+    name: "Rahul Joshi",
+    email: "rahul.joshi@example.com",
+    phone: "+91 32109 87654",
+    address: "345 Mountain View, Deccan, Pune",
+    totalOrders: 23,
+    totalSpent: 6780,
+    lastOrder: "2025-05-16",
+    status: "Regular",
+    rating: 4.6,
+    joinDate: "2024-12-12",
+  },
+  {
+    id: 8,
+    name: "Sneha Desai",
+    email: "sneha.desai@example.com",
+    phone: "+91 21098 76543",
+    address: "678 Valley Lane, Navrangpura, Ahmedabad",
+    totalOrders: 37,
+    totalSpent: 11450,
+    lastOrder: "2025-05-14",
+    status: "VIP",
+    rating: 4.9,
+    joinDate: "2024-07-28",
   },
 ]
 
+// Status color mapping
+const statusColors = {
+  "VIP": "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
+  "Regular": "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+  "New": "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+}
+
 export default function CustomersPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCustomer, setSelectedCustomer] = useState<(typeof customers)[0] | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState("All")
+  
+  // Filter customers based on search and status
+  const filteredCustomers = customers
+    .filter(customer => 
+      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.phone.includes(searchQuery)
+    )
+    .filter(customer => statusFilter === "All" || customer.status === statusFilter)
 
-  const filteredCustomers = customers.filter(
-    (customer) =>
-      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  // Get customer summary
+  const totalCustomers = customers.length
+  const vipCustomers = customers.filter(customer => customer.status === "VIP").length
+  const newCustomers = customers.filter(customer => customer.status === "New").length
+  const totalRevenue = customers.reduce((sum, customer) => sum + customer.totalSpent, 0)
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "VIP":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400"
-      case "Regular":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
-      case "New":
-        return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400"
-    }
+  // Format date
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr)
+    return new Intl.DateTimeFormat('en-IN', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    }).format(date)
   }
 
   return (
-    <div className="space-y-6 p-4 sm:p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-8 animate-fade-in">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Customer Management</h1>
-          <p className="text-muted-foreground mt-1">Manage your customer relationships and track their orders</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Customer Management</h1>
+          <p className="text-gray-400 mt-1">Manage your pizza shop's customers</p>
         </div>
-        <Button className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Customer
-        </Button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <Card className="border-0 shadow-sm bg-card/50 backdrop-blur">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Customers</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-foreground">1,247</div>
-            <p className="text-xs text-green-600 mt-1">+12% from last month</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-sm bg-card/50 backdrop-blur">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">VIP Customers</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-foreground">89</div>
-            <p className="text-xs text-green-600 mt-1">+5% from last month</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-sm bg-card/50 backdrop-blur">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Avg. Order Value</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-foreground">₹650.50</div>
-            <p className="text-xs text-green-600 mt-1">+8% from last month</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-sm bg-card/50 backdrop-blur">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Customer Retention</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-foreground">87%</div>
-            <p className="text-xs text-green-600 mt-1">+3% from last month</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <Card className="border-0 shadow-sm bg-card/50 backdrop-blur">
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="text-foreground">Customer List</CardTitle>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Search customers..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-full sm:w-64 bg-background/50 border-border/50"
-                />
-              </div>
-              <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Customer
               </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-gray-900 border-gray-800 text-white sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add New Customer</DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  Enter the details of the new customer
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-white">Full Name</Label>
+                    <Input id="name" placeholder="e.g., Rajesh Kumar" className="bg-gray-800 border-gray-700" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-white">Email</Label>
+                    <Input id="email" type="email" placeholder="e.g., rajesh@example.com" className="bg-gray-800 border-gray-700" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="text-white">Phone Number</Label>
+                    <Input id="phone" placeholder="e.g., +91 98765 43210" className="bg-gray-800 border-gray-700" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="status" className="text-white">Status</Label>
+                    <Select>
+                      <SelectTrigger className="bg-gray-800 border-gray-700">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-700">
+                        <SelectItem value="new">New</SelectItem>
+                        <SelectItem value="regular">Regular</SelectItem>
+                        <SelectItem value="vip">VIP</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address" className="text-white">Address</Label>
+                  <Input id="address" placeholder="e.g., 123 Main Street, Delhi" className="bg-gray-800 border-gray-700" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" className="border-gray-700 text-white hover:bg-gray-800">Cancel</Button>
+                <Button className="bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90">Add Customer</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="border-gray-700 text-white hover:bg-gray-800">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+                <ChevronDown className="h-4 w-4 ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-gray-900 border-gray-800 text-white">
+              <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                <FileText className="h-4 w-4 mr-2" />
+                Export as CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                <FileText className="h-4 w-4 mr-2" />
+                Export as PDF
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Customer Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">Total Customers</p>
+                <h3 className="text-2xl font-bold text-white">{totalCustomers}</h3>
+                <p className="text-xs text-gray-400 mt-1">Across all categories</p>
+              </div>
+              <div className="p-2 rounded-lg bg-blue-900/20">
+                <Users className="h-6 w-6 text-blue-500" />
+              </div>
             </div>
-          </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">VIP Customers</p>
+                <h3 className="text-2xl font-bold text-white">{vipCustomers}</h3>
+                <p className="text-xs text-gray-400 mt-1">Your best customers</p>
+              </div>
+              <div className="p-2 rounded-lg bg-purple-900/20">
+                <Star className="h-6 w-6 text-purple-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">New Customers</p>
+                <h3 className="text-2xl font-bold text-white">{newCustomers}</h3>
+                <p className="text-xs text-gray-400 mt-1">Last 30 days</p>
+              </div>
+              <div className="p-2 rounded-lg bg-green-900/20">
+                <Clock className="h-6 w-6 text-green-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">Total Revenue</p>
+                <h3 className="text-2xl font-bold text-white">₹{totalRevenue.toLocaleString()}</h3>
+                <p className="text-xs text-gray-400 mt-1">Lifetime value</p>
+              </div>
+              <div className="p-2 rounded-lg bg-orange-900/20">
+                <ArrowUpRight className="h-6 w-6 text-orange-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Customer Tabs */}
+      <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+        <CardHeader className="pb-3">
+          <Tabs defaultValue="all" className="w-full">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+              <TabsList className="bg-gray-800 h-10">
+                <TabsTrigger 
+                  value="all" 
+                  className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400"
+                >
+                  All Customers
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="vip" 
+                  className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400"
+                >
+                  VIP
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="regular" 
+                  className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400"
+                >
+                  Regular
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="new" 
+                  className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400"
+                >
+                  New
+                </TabsTrigger>
+              </TabsList>
+
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div className="relative w-full sm:w-auto">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                  <Input 
+                    placeholder="Search customers..." 
+                    className="pl-9 bg-gray-800 border-gray-700 text-white w-full sm:w-[250px]"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="border-gray-700 text-white hover:bg-gray-800"
+                  onClick={() => {
+                    setSearchQuery("")
+                    setStatusFilter("All")
+                  }}
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  <span className="sr-only">Reset filters</span>
+                </Button>
+              </div>
+            </div>
+
+            {/* All Customers Tab */}
+            <TabsContent value="all" className="mt-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-gray-800 hover:bg-transparent">
+                      <TableHead className="text-gray-400">Customer</TableHead>
+                      <TableHead className="text-gray-400 hidden md:table-cell">Contact</TableHead>
+                      <TableHead className="text-gray-400 hidden lg:table-cell">Address</TableHead>
+                      <TableHead className="text-gray-400 text-right">Orders</TableHead>
+                      <TableHead className="text-gray-400 text-right">Spent</TableHead>
+                      <TableHead className="text-gray-400 hidden sm:table-cell">Last Order</TableHead>
+                      <TableHead className="text-gray-400">Status</TableHead>
+                      <TableHead className="text-gray-400 text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredCustomers.length > 0 ? (
+                      filteredCustomers.map((customer) => (
+                        <TableRow key={customer.id} className="border-gray-800 hover:bg-gray-800/30">
+                          <TableCell className="font-medium">
+                            <div className="flex items-start gap-3">
+                              <div className="w-9 h-9 rounded-full bg-gray-700 flex items-center justify-center text-white font-semibold">
+                                {customer.name.charAt(0)}
+                              </div>
+                              <div>
+                                <div className="font-medium text-white">{customer.name}</div>
+                                <div className="text-xs text-gray-400">Rating: {customer.rating}/5</div>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            <div className="flex flex-col text-sm">
+                              <div className="flex items-center text-gray-300">
+                                <Mail className="h-3.5 w-3.5 mr-2 text-gray-500" />
+                                {customer.email}
+                              </div>
+                              <div className="flex items-center text-gray-300 mt-1">
+                                <Phone className="h-3.5 w-3.5 mr-2 text-gray-500" />
+                                {customer.phone}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="hidden lg:table-cell text-gray-300">
+                            <div className="flex items-center">
+                              <MapPin className="h-3.5 w-3.5 mr-2 flex-shrink-0 text-gray-500" />
+                              <span className="truncate max-w-[200px]">{customer.address}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right text-white">{customer.totalOrders}</TableCell>
+                          <TableCell className="text-right text-white">₹{customer.totalSpent.toLocaleString()}</TableCell>
+                          <TableCell className="hidden sm:table-cell text-gray-300">
+                            {formatDate(customer.lastOrder)}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={statusColors[customer.status]}>
+                              {customer.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  <span className="sr-only">Actions</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="bg-gray-900 border-gray-800 text-white">
+                                <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Edit Customer
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                                  <Star className="h-4 w-4 mr-2" />
+                                  Change Status
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="bg-gray-800" />
+                                <DropdownMenuItem className="text-red-500 hover:bg-gray-800 cursor-pointer">
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={8} className="h-24 text-center text-gray-400">
+                          No customers found with the current filters.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              
+              <div className="mt-6">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious className="text-gray-400 hover:text-white" />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink className="text-white bg-gray-800">1</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink className="text-gray-400 hover:text-white">2</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink className="text-gray-400 hover:text-white">3</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationNext className="text-gray-400 hover:text-white" />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            </TabsContent>
+
+            {/* Other tabs follow the same structure */}
+            <TabsContent value="vip" className="mt-0">
+              {/* Same table but filtered for VIP */}
+            </TabsContent>
+            <TabsContent value="regular" className="mt-0">
+              {/* Same table but filtered for Regular */}
+            </TabsContent>
+            <TabsContent value="new" className="mt-0">
+              {/* Same table but filtered for New */}
+            </TabsContent>
+          </Tabs>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-border/50">
-                  <TableHead className="text-foreground">Customer</TableHead>
-                  <TableHead className="text-foreground hidden sm:table-cell">Contact</TableHead>
-                  <TableHead className="text-foreground">Orders</TableHead>
-                  <TableHead className="text-foreground">Total Spent</TableHead>
-                  <TableHead className="text-foreground hidden md:table-cell">Status</TableHead>
-                  <TableHead className="text-foreground hidden lg:table-cell">Last Order</TableHead>
-                  <TableHead className="text-foreground hidden lg:table-cell">Rating</TableHead>
-                  <TableHead className="text-right text-foreground">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCustomers.map((customer) => (
-                  <TableRow key={customer.id} className="border-border/50 hover:bg-muted/50">
-                    <TableCell>
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="w-8 h-8 sm:w-10 sm:h-10">
-                          <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${customer.name}`} />
-                          <AvatarFallback className="bg-primary/10 text-primary">
-                            {customer.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium text-foreground text-sm sm:text-base">{customer.name}</div>
-                          <div className="text-xs text-muted-foreground">ID: #{customer.id}</div>
-                          <div className="sm:hidden text-xs text-muted-foreground">{customer.email}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell">
-                      <div className="space-y-1">
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Mail className="w-3 h-3 mr-1" />
-                          <span className="truncate max-w-[150px]">{customer.email}</span>
-                        </div>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Phone className="w-3 h-3 mr-1" />
-                          {customer.phone}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="font-medium text-foreground">{customer.totalOrders}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="font-medium text-foreground">₹{customer.totalSpent.toFixed(2)}</div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      <Badge className={getStatusColor(customer.status)}>{customer.status}</Badge>
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell">
-                      <div className="text-sm text-muted-foreground">{customer.lastOrder}</div>
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < customer.rating ? "text-yellow-400 fill-current" : "text-muted-foreground/30"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-background border-border">
-                          <DropdownMenuLabel className="text-foreground">Actions</DropdownMenuLabel>
-                          <DropdownMenuItem
-                            onClick={() => setSelectedCustomer(customer)}
-                            className="text-foreground hover:bg-muted"
-                          >
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-foreground hover:bg-muted">View Orders</DropdownMenuItem>
-                          <DropdownMenuItem className="text-foreground hover:bg-muted">Send Message</DropdownMenuItem>
-                          <DropdownMenuSeparator className="bg-border" />
-                          <DropdownMenuItem className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
-                            Delete Customer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
       </Card>
-
-      {/* Customer Details Dialog */}
-      <Dialog open={!!selectedCustomer} onOpenChange={() => setSelectedCustomer(null)}>
-        <DialogContent className="max-w-2xl bg-background border-border">
-          <DialogHeader>
-            <DialogTitle className="text-foreground">Customer Details</DialogTitle>
-            <DialogDescription className="text-muted-foreground">
-              View and manage customer information
-            </DialogDescription>
-          </DialogHeader>
-          {selectedCustomer && (
-            <div className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <Avatar className="w-16 h-16">
-                  <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${selectedCustomer.name}`} />
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    {selectedCustomer.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h3 className="text-xl font-semibold text-foreground">{selectedCustomer.name}</h3>
-                  <Badge className={getStatusColor(selectedCustomer.status)}>{selectedCustomer.status}</Badge>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Email</Label>
-                  <p className="mt-1 text-foreground">{selectedCustomer.email}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Phone</Label>
-                  <p className="mt-1 text-foreground">{selectedCustomer.phone}</p>
-                </div>
-                <div className="col-span-1 sm:col-span-2">
-                  <Label className="text-sm font-medium text-muted-foreground">Address</Label>
-                  <p className="mt-1 text-foreground">{selectedCustomer.address}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Total Orders</Label>
-                  <p className="mt-1 font-semibold text-foreground">{selectedCustomer.totalOrders}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Total Spent</Label>
-                  <p className="mt-1 font-semibold text-foreground">₹{selectedCustomer.totalSpent.toFixed(2)}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Join Date</Label>
-                  <p className="mt-1 text-foreground">{selectedCustomer.joinDate}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Last Order</Label>
-                  <p className="mt-1 text-foreground">{selectedCustomer.lastOrder}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

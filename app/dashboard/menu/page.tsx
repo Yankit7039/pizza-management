@@ -5,546 +5,574 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { Plus, Edit, Trash2, Search, Filter, Pizza, DollarSign, Clock, Star, Eye, EyeOff } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { useAppContext } from "@/lib/app-context"
-import type { MenuItem } from "@/lib/app-context"
+import {
+  Pizza,
+  Plus,
+  Search,
+  RefreshCw,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  AlertTriangle,
+  Flame,
+  Tag,
+  EyeOff,
+  CheckCircle2,
+  Filter,
+  ArrowUpDown,
+} from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
-const categories = ["All", "Classic", "Vegetarian", "Non-Vegetarian", "Specialty"]
+// Sample menu items data
+const menuItems = [
+  {
+    id: 1,
+    name: "Margherita",
+    description: "Classic Italian pizza with fresh tomatoes, mozzarella, basil, and olive oil",
+    category: "Classic",
+    price: { small: 199, medium: 299, large: 399 },
+    ingredients: ["Tomato Sauce", "Mozzarella Cheese", "Fresh Basil", "Olive Oil"],
+    allergens: ["Dairy", "Gluten"],
+    calories: { small: 850, medium: 1150, large: 1450 },
+    prepTime: 15,
+    isAvailable: true,
+    isPopular: true,
+    image: "/pizzas/margherita.jpg",
+  },
+  {
+    id: 2,
+    name: "Pepperoni",
+    description: "Classic American-style pizza topped with pepperoni slices and mozzarella",
+    category: "Meat",
+    price: { small: 249, medium: 349, large: 449 },
+    ingredients: ["Tomato Sauce", "Mozzarella Cheese", "Pepperoni Slices"],
+    allergens: ["Dairy", "Gluten", "Meat"],
+    calories: { small: 950, medium: 1250, large: 1550 },
+    prepTime: 18,
+    isAvailable: true,
+    isPopular: true,
+    image: "/pizzas/pepperoni.jpg",
+  },
+  {
+    id: 3,
+    name: "Vegetarian Supreme",
+    description: "Loaded with bell peppers, onions, mushrooms, olives, and corn",
+    category: "Vegetarian",
+    price: { small: 229, medium: 329, large: 429 },
+    ingredients: ["Tomato Sauce", "Mozzarella Cheese", "Bell Peppers", "Onions", "Mushrooms", "Black Olives", "Corn"],
+    allergens: ["Dairy", "Gluten"],
+    calories: { small: 800, medium: 1100, large: 1400 },
+    prepTime: 20,
+    isAvailable: true,
+    isPopular: false,
+    image: "/pizzas/veggie.jpg",
+  },
+  {
+    id: 4,
+    name: "BBQ Chicken",
+    description: "Tangy BBQ sauce base with grilled chicken, onions, and cilantro",
+    category: "Specialty",
+    price: { small: 279, medium: 379, large: 479 },
+    ingredients: ["BBQ Sauce", "Mozzarella Cheese", "Grilled Chicken", "Red Onions", "Cilantro"],
+    allergens: ["Dairy", "Gluten", "Meat"],
+    calories: { small: 920, medium: 1220, large: 1520 },
+    prepTime: 22,
+    isAvailable: true,
+    isPopular: true,
+    image: "/pizzas/bbq-chicken.jpg",
+  },
+  {
+    id: 5,
+    name: "Paneer Tikka",
+    description: "Indian-style pizza with spiced paneer cubes, bell peppers, and onions",
+    category: "Indian",
+    price: { small: 259, medium: 359, large: 459 },
+    ingredients: ["Tomato Sauce", "Mozzarella Cheese", "Paneer Cubes", "Bell Peppers", "Onions", "Indian Spices"],
+    allergens: ["Dairy", "Gluten"],
+    calories: { small: 880, medium: 1180, large: 1480 },
+    prepTime: 25,
+    isAvailable: true,
+    isPopular: true,
+    image: "/pizzas/paneer-tikka.jpg",
+  },
+  {
+    id: 6,
+    name: "Mediterranean",
+    description: "Topped with feta cheese, olives, sun-dried tomatoes, and oregano",
+    category: "Specialty",
+    price: { small: 269, medium: 369, large: 469 },
+    ingredients: ["Tomato Sauce", "Mozzarella Cheese", "Feta Cheese", "Olives", "Sun-dried Tomatoes", "Oregano"],
+    allergens: ["Dairy", "Gluten"],
+    calories: { small: 870, medium: 1170, large: 1470 },
+    prepTime: 20,
+    isAvailable: false,
+    isPopular: false,
+    image: "/pizzas/mediterranean.jpg",
+  },
+  {
+    id: 7,
+    name: "Spicy Mexican",
+    description: "Spicy pizza with jalapeños, bell peppers, onions, and corn",
+    category: "Specialty",
+    price: { small: 249, medium: 349, large: 449 },
+    ingredients: ["Tomato Sauce", "Mozzarella Cheese", "Jalapeños", "Bell Peppers", "Onions", "Corn", "Mexican Spices"],
+    allergens: ["Dairy", "Gluten"],
+    calories: { small: 890, medium: 1190, large: 1490 },
+    prepTime: 18,
+    isAvailable: true,
+    isPopular: false,
+    image: "/pizzas/mexican.jpg",
+  },
+  {
+    id: 8,
+    name: "Meat Lovers",
+    description: "Loaded with pepperoni, sausage, bacon, and ground beef",
+    category: "Meat",
+    price: { small: 299, medium: 399, large: 499 },
+    ingredients: ["Tomato Sauce", "Mozzarella Cheese", "Pepperoni", "Sausage", "Bacon", "Ground Beef"],
+    allergens: ["Dairy", "Gluten", "Meat"],
+    calories: { small: 1050, medium: 1350, large: 1650 },
+    prepTime: 25,
+    isAvailable: true,
+    isPopular: true,
+    image: "/pizzas/meat-lovers.jpg",
+  },
+]
 
 export default function MenuPage() {
-  const { state, dispatch } = useAppContext()
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("All")
-  const [isAddingItem, setIsAddingItem] = useState(false)
-  const [editingItem, setEditingItem] = useState<MenuItem | null>(null)
-  const [newItem, setNewItem] = useState({
-    name: "",
-    description: "",
-    category: "Classic",
-    smallPrice: 0,
-    mediumPrice: 0,
-    largePrice: 0,
-    ingredients: "",
-    allergens: "",
-    prepTime: 12,
-    isAvailable: true,
-  })
-  const { toast } = useToast()
-
-  const filteredItems = state.menuItems.filter((item) => {
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = categoryFilter === "All" || item.category === categoryFilter
-    return matchesSearch && matchesCategory
-  })
-
-  const handleAddItem = () => {
-    if (!newItem.name || !newItem.description || !newItem.smallPrice) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      })
-      return
-    }
-
-    const menuItem: MenuItem = {
-      id: state.menuItems.length + 1,
-      name: newItem.name,
-      description: newItem.description,
-      category: newItem.category,
-      price: {
-        small: newItem.smallPrice,
-        medium: newItem.mediumPrice,
-        large: newItem.largePrice,
-      },
-      ingredients: newItem.ingredients.split(",").map((i) => i.trim()),
-      allergens: newItem.allergens.split(",").map((a) => a.trim()),
-      calories: {
-        small: Math.round(newItem.smallPrice * 8), // Rough estimate
-        medium: Math.round(newItem.mediumPrice * 8),
-        large: Math.round(newItem.largePrice * 8),
-      },
-      prepTime: newItem.prepTime,
-      isAvailable: newItem.isAvailable,
-      isPopular: false,
-      image: "/placeholder.svg?height=200&width=200",
-    }
-
-    dispatch({ type: "ADD_MENU_ITEM", payload: menuItem })
-    toast({
-      title: "Menu Item Added",
-      description: `${menuItem.name} has been added to the menu successfully.`,
+  const [availabilityFilter, setAvailabilityFilter] = useState("All")
+  
+  // Filter menu items based on search, category, and availability
+  const filteredItems = menuItems
+    .filter(item => 
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.ingredients.some(ing => ing.toLowerCase().includes(searchQuery.toLowerCase()))
+    )
+    .filter(item => categoryFilter === "All" || item.category === categoryFilter)
+    .filter(item => {
+      if (availabilityFilter === "All") return true;
+      if (availabilityFilter === "Available") return item.isAvailable;
+      if (availabilityFilter === "Unavailable") return !item.isAvailable;
+      return true;
     })
-    setIsAddingItem(false)
-    setNewItem({
-      name: "",
-      description: "",
-      category: "Classic",
-      smallPrice: 0,
-      mediumPrice: 0,
-      largePrice: 0,
-      ingredients: "",
-      allergens: "",
-      prepTime: 12,
-      isAvailable: true,
-    })
-  }
 
-  const handleEditItem = () => {
-    if (!editingItem) return
-
-    const updatedItem: MenuItem = {
-      ...editingItem,
-      name: newItem.name || editingItem.name,
-      description: newItem.description || editingItem.description,
-      category: newItem.category || editingItem.category,
-      price: {
-        small: newItem.smallPrice || editingItem.price.small,
-        medium: newItem.mediumPrice || editingItem.price.medium,
-        large: newItem.largePrice || editingItem.price.large,
-      },
-      ingredients: newItem.ingredients ? newItem.ingredients.split(",").map((i) => i.trim()) : editingItem.ingredients,
-      allergens: newItem.allergens ? newItem.allergens.split(",").map((a) => a.trim()) : editingItem.allergens,
-      prepTime: newItem.prepTime || editingItem.prepTime,
-    }
-
-    dispatch({ type: "UPDATE_MENU_ITEM", payload: updatedItem })
-    toast({
-      title: "Menu Item Updated",
-      description: `${updatedItem.name} has been updated successfully.`,
-    })
-    setEditingItem(null)
-    setNewItem({
-      name: "",
-      description: "",
-      category: "Classic",
-      smallPrice: 0,
-      mediumPrice: 0,
-      largePrice: 0,
-      ingredients: "",
-      allergens: "",
-      prepTime: 12,
-      isAvailable: true,
-    })
-  }
-
-  const handleDeleteItem = (itemId: number, itemName: string) => {
-    dispatch({ type: "DELETE_MENU_ITEM", payload: itemId })
-    toast({
-      title: "Menu Item Deleted",
-      description: `${itemName} has been removed from the menu.`,
-      variant: "destructive",
-    })
-  }
-
-  const toggleAvailability = (itemId: number) => {
-    dispatch({ type: "TOGGLE_MENU_ITEM_AVAILABILITY", payload: itemId })
-    const item = state.menuItems.find((i) => i.id === itemId)
-    toast({
-      title: item?.isAvailable ? "Item Disabled" : "Item Enabled",
-      description: `Menu item is now ${item?.isAvailable ? "unavailable" : "available"} for orders.`,
-    })
-  }
+  // Get unique categories for filter
+  const categories = ["All", ...new Set(menuItems.map(item => item.category))]
+  
+  // Get menu summary
+  const totalItems = menuItems.length
+  const availableItems = menuItems.filter(item => item.isAvailable).length
+  const popularItems = menuItems.filter(item => item.isPopular).length
+  const unavailableItems = menuItems.filter(item => !item.isAvailable).length
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-8 animate-fade-in">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Menu Management</h1>
-          <p className="text-muted-foreground">Manage your pizza menu items and pricing</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Menu Management</h1>
+          <p className="text-gray-400 mt-1">Manage your pizza menu items</p>
         </div>
-        <Dialog open={isAddingItem} onOpenChange={setIsAddingItem}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" />
-              Add New Item
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Add New Menu Item</DialogTitle>
-              <DialogDescription>Create a new pizza for your menu</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name">Pizza Name *</Label>
-                  <Input
-                    id="name"
-                    placeholder="e.g., Margherita Classic"
-                    value={newItem.name}
-                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Pizza
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-gray-900 border-gray-800 text-white sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Add New Pizza</DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  Add a new pizza to your menu
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-white">Pizza Name</Label>
+                    <Input id="name" placeholder="e.g., Margherita" className="bg-gray-800 border-gray-700" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category" className="text-white">Category</Label>
+                    <Select>
+                      <SelectTrigger className="bg-gray-800 border-gray-700">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-900 border-gray-800 text-white">
+                        <SelectItem value="classic">Classic</SelectItem>
+                        <SelectItem value="specialty">Specialty</SelectItem>
+                        <SelectItem value="vegetarian">Vegetarian</SelectItem>
+                        <SelectItem value="meat">Meat</SelectItem>
+                        <SelectItem value="indian">Indian</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description" className="text-white">Description</Label>
+                  <Textarea 
+                    id="description" 
+                    placeholder="Brief description of the pizza" 
+                    className="bg-gray-800 border-gray-700 min-h-[80px]" 
                   />
                 </div>
-                <div>
-                  <Label htmlFor="category">Category</Label>
-                  <Select
-                    value={newItem.category}
-                    onValueChange={(value) => setNewItem({ ...newItem, category: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Classic">Classic</SelectItem>
-                      <SelectItem value="Vegetarian">Vegetarian</SelectItem>
-                      <SelectItem value="Non-Vegetarian">Non-Vegetarian</SelectItem>
-                      <SelectItem value="Specialty">Specialty</SelectItem>
-                    </SelectContent>
-                  </Select>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-2">
+                    <Label className="text-white">Small Price (₹)</Label>
+                    <Input type="number" placeholder="0" className="bg-gray-800 border-gray-700" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white">Medium Price (₹)</Label>
+                    <Input type="number" placeholder="0" className="bg-gray-800 border-gray-700" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white">Large Price (₹)</Label>
+                    <Input type="number" placeholder="0" className="bg-gray-800 border-gray-700" />
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <Label htmlFor="description">Description *</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe the pizza ingredients and flavors..."
-                  value={newItem.description}
-                  onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="small-price">Small Price (₹) *</Label>
-                  <Input
-                    id="small-price"
-                    type="number"
-                    step="1"
-                    placeholder="249"
-                    value={newItem.smallPrice || ""}
-                    onChange={(e) => setNewItem({ ...newItem, smallPrice: Number.parseInt(e.target.value) || 0 })}
+                <div className="space-y-2">
+                  <Label className="text-white">Ingredients</Label>
+                  <Textarea 
+                    placeholder="Enter ingredients, comma separated" 
+                    className="bg-gray-800 border-gray-700" 
                   />
                 </div>
-                <div>
-                  <Label htmlFor="medium-price">Medium Price (₹) *</Label>
-                  <Input
-                    id="medium-price"
-                    type="number"
-                    step="1"
-                    placeholder="349"
-                    value={newItem.mediumPrice || ""}
-                    onChange={(e) => setNewItem({ ...newItem, mediumPrice: Number.parseInt(e.target.value) || 0 })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="large-price">Large Price (₹) *</Label>
-                  <Input
-                    id="large-price"
-                    type="number"
-                    step="1"
-                    placeholder="449"
-                    value={newItem.largePrice || ""}
-                    onChange={(e) => setNewItem({ ...newItem, largePrice: Number.parseInt(e.target.value) || 0 })}
-                  />
-                </div>
-              </div>
 
-              <div>
-                <Label htmlFor="ingredients">Ingredients (comma separated)</Label>
-                <Input
-                  id="ingredients"
-                  placeholder="Mozzarella, Tomato Sauce, Fresh Basil..."
-                  value={newItem.ingredients}
-                  onChange={(e) => setNewItem({ ...newItem, ingredients: e.target.value })}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="allergens">Allergens (comma separated)</Label>
-                  <Input
-                    id="allergens"
-                    placeholder="Dairy, Gluten..."
-                    value={newItem.allergens}
-                    onChange={(e) => setNewItem({ ...newItem, allergens: e.target.value })}
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label className="text-white">Allergens</Label>
+                    <Input placeholder="e.g., Dairy, Gluten" className="bg-gray-800 border-gray-700" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white">Prep Time (mins)</Label>
+                    <Input type="number" placeholder="15" className="bg-gray-800 border-gray-700" />
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="prep-time">Prep Time (minutes)</Label>
-                  <Input
-                    id="prep-time"
-                    type="number"
-                    placeholder="12"
-                    value={newItem.prepTime || ""}
-                    onChange={(e) => setNewItem({ ...newItem, prepTime: Number.parseInt(e.target.value) || 12 })}
-                  />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="flex items-center space-x-2">
+                    <Switch id="available" />
+                    <Label htmlFor="available" className="text-white cursor-pointer">Available</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch id="popular" />
+                    <Label htmlFor="popular" className="text-white cursor-pointer">Popular Item</Label>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-white">Pizza Image</Label>
+                  <Input type="file" className="bg-gray-800 border-gray-700 text-white" />
                 </div>
               </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="available"
-                  checked={newItem.isAvailable}
-                  onCheckedChange={(checked) => setNewItem({ ...newItem, isAvailable: checked })}
-                />
-                <Label htmlFor="available">Available for orders</Label>
-              </div>
-
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsAddingItem(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleAddItem}>Add Item</Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+              <DialogFooter>
+                <Button variant="outline" className="border-gray-700 text-white hover:bg-gray-800">Cancel</Button>
+                <Button className="bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90">Add Pizza</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
-      {/* Filters */}
-      <Card className="border-0 shadow-sm">
-        <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search menu items..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+      {/* Menu Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">Total Pizzas</p>
+                <h3 className="text-2xl font-bold text-white">{totalItems}</h3>
+                <p className="text-xs text-gray-400 mt-1">Across {categories.length - 1} categories</p>
+              </div>
+              <div className="p-2 rounded-lg bg-orange-900/20">
+                <Pizza className="h-6 w-6 text-orange-500" />
+              </div>
             </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full sm:w-48">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          </CardContent>
+        </Card>
+
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">Available Items</p>
+                <h3 className="text-2xl font-bold text-white">{availableItems}</h3>
+                <p className="text-xs text-gray-400 mt-1">Ready to order</p>
+              </div>
+              <div className="p-2 rounded-lg bg-green-900/20">
+                <CheckCircle2 className="h-6 w-6 text-green-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">Popular Items</p>
+                <h3 className="text-2xl font-bold text-white">{popularItems}</h3>
+                <p className="text-xs text-gray-400 mt-1">Customer favorites</p>
+              </div>
+              <div className="p-2 rounded-lg bg-red-900/20">
+                <Flame className="h-6 w-6 text-red-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-400 mb-1">Unavailable</p>
+                <h3 className="text-2xl font-bold text-white">{unavailableItems}</h3>
+                <p className="text-xs text-gray-400 mt-1">Not on menu</p>
+              </div>
+              <div className="p-2 rounded-lg bg-gray-800">
+                <EyeOff className="h-6 w-6 text-gray-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Menu Table Card */}
+      <Card className="border-gray-800 shadow-lg bg-gray-900/50">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <CardTitle className="text-xl text-white">Pizza Menu</CardTitle>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <div className="relative w-full sm:w-auto">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <Input 
+                  placeholder="Search menu..." 
+                  className="pl-9 bg-gray-800 border-gray-700 text-white w-full sm:w-[250px]"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              
+              <div className="flex gap-3 w-full sm:w-auto">
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white w-full sm:w-[130px]">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-900 border-gray-800 text-white">
+                    {categories.map(category => (
+                      <SelectItem key={category} value={category}>{category}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                <Select value={availabilityFilter} onValueChange={setAvailabilityFilter}>
+                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white w-full sm:w-[130px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-900 border-gray-800 text-white">
+                    <SelectItem value="All">All</SelectItem>
+                    <SelectItem value="Available">Available</SelectItem>
+                    <SelectItem value="Unavailable">Unavailable</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-gray-700 text-white hover:bg-gray-800"
+                onClick={() => {
+                  setSearchQuery("")
+                  setCategoryFilter("All")
+                  setAvailabilityFilter("All")
+                }}
+              >
+                <RefreshCw className="h-4 w-4" />
+                <span className="sr-only">Reset filters</span>
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-gray-800 hover:bg-transparent">
+                  <TableHead className="text-gray-400 w-[250px]">Pizza</TableHead>
+                  <TableHead className="text-gray-400">Category</TableHead>
+                  <TableHead className="text-gray-400 text-right">Price (M)</TableHead>
+                  <TableHead className="text-gray-400 hidden md:table-cell">Ingredients</TableHead>
+                  <TableHead className="text-gray-400 hidden lg:table-cell text-right">Prep Time</TableHead>
+                  <TableHead className="text-gray-400 text-center">Status</TableHead>
+                  <TableHead className="text-gray-400 text-center">Popular</TableHead>
+                  <TableHead className="text-gray-400 text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredItems.length > 0 ? (
+                  filteredItems.map((item) => (
+                    <TableRow key={item.id} className="border-gray-800 hover:bg-gray-800/30">
+                      <TableCell className="font-medium">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-md bg-gray-800 flex items-center justify-center text-orange-500">
+                            <Pizza className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <div className="font-medium text-white">{item.name}</div>
+                            <div className="text-xs text-gray-400 mt-1 max-w-[200px] truncate">{item.description}</div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="bg-gray-800/50 text-gray-300 border-gray-700">
+                          {item.category}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-medium text-white">₹{item.price.medium}</TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <div className="flex flex-wrap gap-1 max-w-[250px]">
+                          {item.ingredients.slice(0, 3).map((ing, i) => (
+                            <Badge key={i} variant="outline" className="bg-gray-800/50 text-gray-300 border-gray-700 text-xs">
+                              {ing}
+                            </Badge>
+                          ))}
+                          {item.ingredients.length > 3 && (
+                            <Badge variant="outline" className="bg-gray-800/50 text-gray-300 border-gray-700 text-xs">
+                              +{item.ingredients.length - 3} more
+                            </Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell text-right text-gray-300">{item.prepTime} mins</TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline" className={item.isAvailable ? 
+                          "bg-green-900/20 text-green-400 border-green-900/50" : 
+                          "bg-red-900/20 text-red-400 border-red-900/50"
+                        }>
+                          {item.isAvailable ? "Available" : "Unavailable"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.isPopular ? (
+                          <div className="h-6 w-6 mx-auto bg-orange-900/20 rounded-full flex items-center justify-center">
+                            <Flame className="h-4 w-4 text-orange-500" />
+                          </div>
+                        ) : (
+                          <div className="h-6 w-6 mx-auto bg-gray-800/50 rounded-full flex items-center justify-center">
+                            <span className="h-2 w-2 rounded-full bg-gray-600" />
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-gray-900 border-gray-800 text-white">
+                            <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit Pizza
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                              {item.isAvailable ? (
+                                <>
+                                  <EyeOff className="h-4 w-4 mr-2" />
+                                  Mark Unavailable
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                                  Mark Available
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer">
+                              {item.isPopular ? (
+                                <>
+                                  <Tag className="h-4 w-4 mr-2" />
+                                  Remove Popular Tag
+                                </>
+                              ) : (
+                                <>
+                                  <Flame className="h-4 w-4 mr-2" />
+                                  Mark as Popular
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="bg-gray-800" />
+                            <DropdownMenuItem className="text-red-500 hover:bg-gray-800 cursor-pointer">
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={8} className="h-24 text-center text-gray-400">
+                      No menu items found with the current filters.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
-
-      {/* Menu Items Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredItems.map((item) => (
-          <Card
-            key={item.id}
-            className={`border-0 shadow-sm transition-all hover:shadow-md ${!item.isAvailable ? "opacity-60" : ""}`}
-          >
-            <CardHeader className="pb-4">
-              <div className="relative">
-                <img
-                  src={item.image || "/placeholder.svg"}
-                  alt={item.name}
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-                <div className="absolute top-2 right-2 flex gap-2">
-                  {item.isPopular && (
-                    <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 dark:bg-yellow-900/20 dark:text-yellow-400">
-                      <Star className="w-3 h-3 mr-1" />
-                      Popular
-                    </Badge>
-                  )}
-                  <Badge variant={item.isAvailable ? "default" : "secondary"}>
-                    {item.isAvailable ? "Available" : "Unavailable"}
-                  </Badge>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <CardTitle className="text-xl">{item.name}</CardTitle>
-                <CardDescription>{item.description}</CardDescription>
-                <Badge variant="outline">{item.category}</Badge>
-              </div>
-            </CardHeader>
-
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-3 gap-2 text-sm">
-                <div className="text-center p-2 bg-muted/50 rounded">
-                  <p className="font-medium">₹{item.price.small}</p>
-                  <p className="text-muted-foreground">Small</p>
-                </div>
-                <div className="text-center p-2 bg-muted/50 rounded">
-                  <p className="font-medium">₹{item.price.medium}</p>
-                  <p className="text-muted-foreground">Medium</p>
-                </div>
-                <div className="text-center p-2 bg-muted/50 rounded">
-                  <p className="font-medium">₹{item.price.large}</p>
-                  <p className="text-muted-foreground">Large</p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  {item.prepTime} min
-                </div>
-                <div className="flex items-center gap-1">
-                  <DollarSign className="w-4 h-4" />
-                  {item.calories.medium} cal
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Switch checked={item.isAvailable} onCheckedChange={() => toggleAvailability(item.id)} />
-                  <span className="text-sm">
-                    {item.isAvailable ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                  </span>
-                </div>
-
-                <div className="flex gap-2">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setEditingItem(item)
-                          setNewItem({
-                            name: item.name,
-                            description: item.description,
-                            category: item.category,
-                            smallPrice: item.price.small,
-                            mediumPrice: item.price.medium,
-                            largePrice: item.price.large,
-                            ingredients: item.ingredients.join(", "),
-                            allergens: item.allergens.join(", "),
-                            prepTime: item.prepTime,
-                            isAvailable: item.isAvailable,
-                          })
-                        }}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>Edit Menu Item</DialogTitle>
-                        <DialogDescription>Update pizza details</DialogDescription>
-                      </DialogHeader>
-                      {editingItem && (
-                        <div className="space-y-6">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <Label htmlFor="edit-name">Pizza Name</Label>
-                              <Input
-                                id="edit-name"
-                                value={newItem.name}
-                                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="edit-category">Category</Label>
-                              <Select
-                                value={newItem.category}
-                                onValueChange={(value) => setNewItem({ ...newItem, category: value })}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="Classic">Classic</SelectItem>
-                                  <SelectItem value="Vegetarian">Vegetarian</SelectItem>
-                                  <SelectItem value="Non-Vegetarian">Non-Vegetarian</SelectItem>
-                                  <SelectItem value="Specialty">Specialty</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-
-                          <div>
-                            <Label htmlFor="edit-description">Description</Label>
-                            <Textarea
-                              id="edit-description"
-                              value={newItem.description}
-                              onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-3 gap-4">
-                            <div>
-                              <Label htmlFor="edit-small-price">Small Price (₹)</Label>
-                              <Input
-                                id="edit-small-price"
-                                type="number"
-                                step="1"
-                                value={newItem.smallPrice || ""}
-                                onChange={(e) =>
-                                  setNewItem({ ...newItem, smallPrice: Number.parseInt(e.target.value) || 0 })
-                                }
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="edit-medium-price">Medium Price (₹)</Label>
-                              <Input
-                                id="edit-medium-price"
-                                type="number"
-                                step="1"
-                                value={newItem.mediumPrice || ""}
-                                onChange={(e) =>
-                                  setNewItem({ ...newItem, mediumPrice: Number.parseInt(e.target.value) || 0 })
-                                }
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="edit-large-price">Large Price (₹)</Label>
-                              <Input
-                                id="edit-large-price"
-                                type="number"
-                                step="1"
-                                value={newItem.largePrice || ""}
-                                onChange={(e) =>
-                                  setNewItem({ ...newItem, largePrice: Number.parseInt(e.target.value) || 0 })
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          <div className="flex justify-end gap-2">
-                            <Button variant="outline" onClick={() => setEditingItem(null)}>
-                              Cancel
-                            </Button>
-                            <Button onClick={handleEditItem}>Save Changes</Button>
-                          </div>
-                        </div>
-                      )}
-                    </DialogContent>
-                  </Dialog>
-
-                  <Button variant="outline" size="sm" onClick={() => handleDeleteItem(item.id, item.name)}>
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {filteredItems.length === 0 && (
-        <Card className="border-0 shadow-sm">
-          <CardContent className="text-center py-12">
-            <Pizza className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">No menu items found</h3>
-            <p className="text-muted-foreground">Try adjusting your search or filter criteria</p>
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 }
