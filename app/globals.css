@@ -99,6 +99,15 @@ body {
   [data-nextjs-scroll-focus-boundary] {
     @apply bg-black dark:bg-black;
   }
+
+  /* Gradient Text and Background */
+  .gradient-text {
+    @apply bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent;
+  }
+  
+  .gradient-bg {
+    @apply bg-gradient-to-r from-orange-500 to-red-500;
+  }
 }
 
 @layer utilities {
@@ -148,45 +157,16 @@ body {
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
-    background: black;
+    background: transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground));
+    background-color: hsl(var(--muted-foreground));
     border-radius: 3px;
   }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--foreground));
-  }
 }
 
-/* Mobile-first responsive design */
-@media (max-width: 640px) {
-  .container {
-    @apply px-4;
-  }
-}
-
-@media (min-width: 641px) and (max-width: 1024px) {
-  .container {
-    @apply px-6;
-  }
-}
-
-@media (min-width: 1025px) {
-  .container {
-    @apply px-8;
-  }
-}
-
-/* Force dark theme and black background globally */
-html {
-  color-scheme: dark;
-  background-color: black !important;
-}
-
-html,
+/* Force dark mode everywhere */
 body,
 #__next,
 main,
@@ -200,40 +180,4 @@ div {
 .bg-muted,
 .bg-background {
   background-color: black !important;
-}
-
-/* Light mode overrides */
-/* Light mode overrides */
-html:not(.dark) {
-  background-color: #f9fafb !important; /* Softer gray, not pure white */
-  color: #1f2937 !important;            /* Stronger text for readability */
-}
-
-html:not(.dark) body,
-html:not(.dark) #__next,
-html:not(.dark) main,
-html:not(.dark) div {
-  background-color: #f9fafb !important;
-  color: #1f2937 !important;
-}
-
-html:not(.dark) .card,
-html:not(.dark) .bg-card,
-html:not(.dark) .bg-muted,
-html:not(.dark) .bg-background {
-  background-color: #ffffff !important; /* Card white with contrast */
-  border: 1px solid #e5e7eb !important; /* Tailwind gray-200 border */
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04); /* Light shadow */
-}
-
-html:not(.dark) .text-muted,
-html:not(.dark) .text-gray-500 {
-  color: #6b7280 !important; /* Tailwind gray-600 */
-}
-
-/* Improve button contrast */
-html:not(.dark) .btn,
-html:not(.dark) .button {
-  background-color: #111827 !important;  /* Tailwind gray-900 */
-  color: white !important;
 }

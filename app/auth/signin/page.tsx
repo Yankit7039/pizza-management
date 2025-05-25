@@ -117,14 +117,14 @@ export default function AuthPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4 relative">
       {/* Header */}
       <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-        <Link href="/">
+        <Link href="/home">
           <Button variant="outline" size="sm" className="gap-2 bg-background/80 backdrop-blur border-border/50">
             <ArrowLeft className="w-4 h-4" />
             <Home className="w-4 h-4" />
             <span className="hidden sm:inline">Home</span>
           </Button>
         </Link>
-        <ThemeToggle />
+        {/* <ThemeToggle /> */}
       </div>
 
       {/* Background Pattern */}
@@ -313,7 +313,7 @@ export default function AuthPage() {
                         id="confirm-password"
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm your password"
-                        className="pl-10 bg-background/50 border-border/50 focus:border-primary"
+                        className="pl-10 pr-10 bg-background/50 border-border/50 focus:border-primary"
                         value={formData.confirmPassword}
                         onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                         required
@@ -340,31 +340,26 @@ export default function AuthPage() {
                   </div>
                 </div>
               </TabsContent>
+
+              <div className="mt-4">
+                <Button
+                  variant="outline"
+                  type="button"
+                  className="w-full h-12 gap-2 hover:bg-muted/20"
+                  onClick={handleGoogleSignIn}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Chrome className="w-5 h-5 text-blue-500" />
+                  )}
+                  Continue with Google
+                </Button>
+              </div>
             </Tabs>
-
-            <Button
-              onClick={handleGoogleSignIn}
-              disabled={isLoading}
-              className="w-full h-12 bg-background hover:bg-accent text-foreground border border-border/50 shadow-sm transition-all duration-200 hover:shadow-md"
-              variant="outline"
-            >
-              {isLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin mr-3" />
-              ) : (
-                <Chrome className="w-5 h-5 mr-3 text-blue-500" />
-              )}
-              {isLoading ? "Signing in..." : "Continue with Google"}
-            </Button>
-
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground">Secure authentication powered by Google OAuth</p>
-            </div>
           </CardContent>
         </Card>
-
-        <div className="mt-8 text-center">
-          <p className="text-sm text-muted-foreground">Built with Next.js • Tailwind CSS • NextAuth.js</p>
-        </div>
       </div>
     </div>
   )

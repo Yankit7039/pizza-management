@@ -1,251 +1,192 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import {
-  Pizza,
-  Star,
-  Users,
-  Clock,
-  MapPin,
-  Phone,
-  Mail,
-  ChefHat,
-  Truck,
-  Shield,
-  ArrowRight,
-  Globe,
-  Award,
-  Heart,
-  Zap,
-} from "lucide-react"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { Pizza, Users, TrendingUp, Globe, Star, MapPin, Phone, Mail, Play, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { ThemeToggle } from "@/components/theme-toggle"
+
+const features = [
+  {
+    icon: Pizza,
+    title: "Menu Management",
+    description: "Easily manage your pizza menu, pricing, and ingredients with our intuitive interface.",
+  },
+  {
+    icon: Users,
+    title: "Customer Management",
+    description: "Track customer orders, preferences, and build lasting relationships.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Analytics & Reports",
+    description: "Get detailed insights into your business performance with comprehensive analytics.",
+  },
+  {
+    icon: Globe,
+    title: "Multi-Location Support",
+    description: "Manage multiple pizza outlets across different locations from one dashboard.",
+  },
+]
+
+const testimonials = [
+  {
+    name: "Rajesh Kumar",
+    business: "Delhi Pizza Corner",
+    location: "Connaught Place, Delhi",
+    rating: 5,
+    comment: "PizzaCraft has transformed how we manage our business. Orders are up 40% since we started using it!",
+  },
+  {
+    name: "Priya Sharma",
+    business: "Mumbai Pizza Express",
+    location: "Bandra, Mumbai",
+    rating: 5,
+    comment: "The analytics feature helps us understand our customers better. Highly recommended!",
+  },
+  {
+    name: "Amit Patel",
+    business: "Bangalore Pizza Hub",
+    location: "Koramangala, Bangalore",
+    rating: 5,
+    comment: "Customer management has never been easier. We can track everything in real-time.",
+  },
+]
+
+const stats = [
+  { number: "500+", label: "Pizza Outlets" },
+  { number: "50,000+", label: "Daily Orders" },
+  { number: "25+", label: "Cities Covered" },
+  { number: "99.9%", label: "Uptime" },
+]
 
 export default function HomePage() {
-  const { data: session } = useSession()
-  const router = useRouter()
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  useEffect(() => {
-    setIsLoaded(true)
-    if (session) {
-      router.push("/dashboard")
-    }
-  }, [session, router])
-
-  const features = [
-    {
-      icon: ChefHat,
-      title: "Authentic Recipes",
-      description: "Traditional Italian recipes with Indian fusion flavors",
-    },
-    {
-      icon: Truck,
-      title: "Fast Delivery",
-      description: "Hot pizzas delivered within 30 minutes across Delhi",
-    },
-    {
-      icon: Shield,
-      title: "Quality Assured",
-      description: "Fresh ingredients sourced daily from trusted suppliers",
-    },
-    {
-      icon: Heart,
-      title: "Made with Love",
-      description: "Every pizza crafted with passion and attention to detail",
-    },
-  ]
-
-  const stats = [
-    { icon: Users, value: "50,000+", label: "Happy Customers" },
-    { icon: Pizza, value: "1,00,000+", label: "Pizzas Delivered" },
-    { icon: Star, value: "4.8/5", label: "Customer Rating" },
-    { icon: MapPin, value: "25+", label: "Delhi Locations" },
-  ]
-
-  const testimonials = [
-    {
-      name: "Rajesh Kumar",
-      location: "Connaught Place",
-      rating: 5,
-      comment: "Best pizza in Delhi! The Paneer Tikka pizza is absolutely delicious.",
-    },
-    {
-      name: "Priya Sharma",
-      location: "Lajpat Nagar",
-      rating: 5,
-      comment: "Quick delivery and amazing taste. My family's favorite pizza place!",
-    },
-    {
-      name: "Amit Gupta",
-      location: "Karol Bagh",
-      rating: 5,
-      comment: "Fresh ingredients and perfect crust every time. Highly recommended!",
-    },
-  ]
-
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
+  const [activeTab, setActiveTab] = useState("features")
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      {/* Navigation */}
+      <nav className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center">
                 <Pizza className="w-6 h-6 text-white" />
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">PizzaCraft</h1>
-                <p className="text-xs text-muted-foreground hidden sm:block">Delhi's Finest Pizza</p>
-              </div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                PizzaCraft
+              </span>
             </div>
 
-            <nav className="hidden md:flex items-center space-x-6">
-              <a
-                href="#features"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
+            <div className="hidden md:flex items-center space-x-8">
+              <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
                 Features
-              </a>
-              <a
-                href="#about"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                About
-              </a>
-              <a
-                href="#testimonials"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Reviews
-              </a>
-              <a
-                href="#contact"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
+              </Link>
+              <Link href="#testimonials" className="text-muted-foreground hover:text-foreground transition-colors">
+                Testimonials
+              </Link>
+              <Link href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
                 Contact
-              </a>
-            </nav>
+              </Link>
+              {/* <ThemeToggle /> */}
+            </div>
 
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
+            <div className="flex items-center space-x-4">
+              {/* <ThemeToggle className="md:hidden" /> */}
               <Link href="/auth/signin">
-                <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg">
-                  Login / Sign Up
+                <Button variant="outline">Sign In</Button>
+              </Link>
+              <Link href="/auth/signin">
+                <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
+                  Get Started
                 </Button>
               </Link>
             </div>
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
+      <section className="relative py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32 relative">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400">
-                  <Globe className="w-3 h-3 mr-1" />
-                  Serving Delhi Since 2020
-                </Badge>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
-                  Delhi's Most
-                  <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                    {" "}
-                    Loved{" "}
-                  </span>
-                  Pizza Experience
-                </h1>
-                <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl">
-                  From authentic Italian classics to innovative Indian fusion flavors, we craft every pizza with premium
-                  ingredients and deliver happiness to your doorstep across Delhi.
-                </p>
-              </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center">
+            <Badge className="mb-6 bg-orange-100 text-orange-800 hover:bg-orange-100 dark:bg-orange-900/20 dark:text-orange-400">
+              🚀 Now serving 500+ pizza outlets across India
+            </Badge>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/auth/signin">
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg"
-                  >
-                    Order Now
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call: +91 98765 43210
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 bg-clip-text text-transparent">
+                Manage Your
+              </span>
+              <br />
+              <span className="text-foreground">Pizza Business</span>
+              <br />
+              <span className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 bg-clip-text text-transparent">
+                Like a Pro
+              </span>
+            </h1>
+
+            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+              From Delhi to Mumbai, Bangalore to Kolkata - PizzaCraft helps pizza businesses across India streamline
+              operations, boost sales, and delight customers with our comprehensive management platform.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+              <Link href="/auth/signin">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-lg px-8 py-6"
+                >
+                  Start Free Trial
+                  <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8">
-                {stats.map((stat, index) => (
-                  <div key={index} className="text-center">
-                    <div className="flex justify-center mb-2">
-                      <stat.icon className="w-6 h-6 text-orange-500" />
-                    </div>
-                    <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
+              </Link>
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+                <Play className="w-5 h-5 mr-2" />
+                Watch Demo
+              </Button>
             </div>
 
-            <div className="relative">
-              <div className="relative z-10">
-                <img
-                  src="/placeholder.svg?height=600&width=600"
-                  alt="Delicious Pizza"
-                  className="w-full h-auto rounded-2xl shadow-2xl"
-                />
-              </div>
-              <div className="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-orange-400 to-red-500 rounded-full opacity-20 blur-3xl"></div>
-              <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full opacity-20 blur-3xl"></div>
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-3xl md:text-4xl font-bold text-foreground mb-2">{stat.number}</div>
+                  <div className="text-muted-foreground">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-16 sm:py-24 bg-muted/30">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="features" className="py-20 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Why Choose PizzaCraft?</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We're committed to delivering not just pizza, but an exceptional experience that keeps you coming back for
-              more.
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Everything You Need to Run Your Pizza Business</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Powerful features designed specifically for Indian pizza businesses
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-card/50 backdrop-blur"
+                className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <feature.icon className="w-8 h-8 text-white" />
+                <CardHeader>
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center mb-4">
+                    <feature.icon className="w-6 h-6 text-white" />
                   </div>
                   <CardTitle className="text-xl">{feature.title}</CardTitle>
                 </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-muted-foreground">{feature.description}</p>
+                <CardContent>
+                  <CardDescription className="text-base">{feature.description}</CardDescription>
                 </CardContent>
               </Card>
             ))}
@@ -253,91 +194,69 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="py-16 sm:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
-                  <Award className="w-3 h-3 mr-1" />
-                  Award Winning
-                </Badge>
-                <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Crafting Perfect Pizzas Since 2020</h2>
-                <p className="text-lg text-muted-foreground">
-                  What started as a small family business in Delhi has grown into the city's most trusted pizza brand.
-                  We combine traditional Italian techniques with local Indian flavors to create unique pizzas that Delhi
-                  loves.
-                </p>
-              </div>
+      {/* Global Footprint */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Trusted Across India</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              From metro cities to tier-2 towns, pizza businesses trust PizzaCraft
+            </p>
+          </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Zap className="w-4 h-4 text-orange-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Fresh Daily</h3>
-                    <p className="text-sm text-muted-foreground">Dough made fresh every morning</p>
-                  </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 text-center">
+            {[
+              { city: "Delhi NCR", outlets: "120+" },
+              { city: "Mumbai", outlets: "95+" },
+              { city: "Bangalore", outlets: "80+" },
+              { city: "Chennai", outlets: "65+" },
+              { city: "Kolkata", outlets: "55+" },
+              { city: "Pune", outlets: "45+" },
+              { city: "Hyderabad", outlets: "40+" },
+              { city: "Ahmedabad", outlets: "35+" },
+              { city: "Jaipur", outlets: "25+" },
+              { city: "Lucknow", outlets: "20+" },
+            ].map((location, index) => (
+              <div key={index} className="p-6 rounded-xl bg-card border">
+                <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-full mx-auto mb-3 flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-white" />
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-4 h-4 text-orange-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">30 Min Delivery</h3>
-                    <p className="text-sm text-muted-foreground">Hot pizza guaranteed</p>
-                  </div>
-                </div>
+                <div className="font-semibold text-lg">{location.outlets}</div>
+                <div className="text-muted-foreground text-sm">{location.city}</div>
               </div>
-            </div>
-
-            <div className="relative">
-              <img
-                src="/placeholder.svg?height=500&width=600"
-                alt="Pizza Kitchen"
-                className="w-full h-auto rounded-2xl shadow-xl"
-              />
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-16 sm:py-24 bg-muted/30">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Testimonials */}
+      <section id="testimonials" className="py-20 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">What Our Customers Say</h2>
-            <p className="text-lg text-muted-foreground">
-              Don't just take our word for it - hear from our happy customers across Delhi
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Customers Say</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Real stories from real pizza business owners across India
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="border-0 shadow-lg bg-card/50 backdrop-blur">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-semibold">
-                      {testimonial.name.charAt(0)}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">{testimonial.name}</h3>
-                      <p className="text-sm text-muted-foreground flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {testimonial.location}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
+              <Card key={index} className="border-0 shadow-lg">
+                <CardHeader>
+                  <div className="flex items-center space-x-1 mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
+                  <CardDescription className="text-base italic">"{testimonial.comment}"</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground italic">"{testimonial.comment}"</p>
+                  <div className="font-semibold">{testimonial.name}</div>
+                  <div className="text-sm text-muted-foreground">{testimonial.business}</div>
+                  <div className="text-sm text-muted-foreground flex items-center mt-1">
+                    <MapPin className="w-3 h-3 mr-1" />
+                    {testimonial.location}
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -345,135 +264,119 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="py-16 sm:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Get In Touch</h2>
-            <p className="text-lg text-muted-foreground">Ready to order or have questions? We're here to help!</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="border-0 shadow-lg text-center bg-card/50 backdrop-blur">
-              <CardHeader>
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Phone className="w-8 h-8 text-white" />
-                </div>
-                <CardTitle>Call Us</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-2">Order hotline</p>
-                <p className="font-semibold text-foreground">+91 98765 43210</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg text-center bg-card/50 backdrop-blur">
-              <CardHeader>
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Mail className="w-8 h-8 text-white" />
-                </div>
-                <CardTitle>Email Us</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-2">Customer support</p>
-                <p className="font-semibold text-foreground">hello@pizzacraft.in</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg text-center bg-card/50 backdrop-blur">
-              <CardHeader>
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="w-8 h-8 text-white" />
-                </div>
-                <CardTitle>Visit Us</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-2">Main branch</p>
-                <p className="font-semibold text-foreground">Connaught Place, New Delhi</p>
-              </CardContent>
-            </Card>
-          </div>
+      {/* CTA Section */}
+      <section className="py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Card className="border-0 shadow-2xl bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20">
+            <CardContent className="p-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Transform Your Pizza Business?</h2>
+              <p className="text-xl text-muted-foreground mb-8">
+                Join 500+ pizza outlets across India. Start your free trial today!
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/auth/signin">
+                  <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-lg px-8 py-6"
+                  >
+                    Start Free Trial
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+                  Schedule Demo
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-muted/50 border-t border-border">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <footer id="contact" className="bg-muted/50 border-t">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center">
-                  <Pizza className="w-6 h-6 text-white" />
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
+                  <Pizza className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-foreground">PizzaCraft</h3>
-                  <p className="text-sm text-muted-foreground">Delhi's Finest Pizza</p>
+                <span className="text-xl font-bold">PizzaCraft</span>
+              </div>
+              <p className="text-muted-foreground mb-4 max-w-md">
+                Empowering pizza businesses across India with cutting-edge management solutions.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 text-muted-foreground">
+                  <MapPin className="w-4 h-4" />
+                  <span>Connaught Place, New Delhi, India</span>
+                </div>
+                <div className="flex items-center space-x-2 text-muted-foreground">
+                  <Phone className="w-4 h-4" />
+                  <span>+91 11 4567 8900</span>
+                </div>
+                <div className="flex items-center space-x-2 text-muted-foreground">
+                  <Mail className="w-4 h-4" />
+                  <span>hello@pizzacraft.in</span>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Crafting delicious pizzas with love and delivering happiness across Delhi since 2020.
-              </p>
             </div>
 
             <div>
-              <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <h4 className="font-semibold mb-4">Product</h4>
+              <ul className="space-y-2 text-muted-foreground">
                 <li>
-                  <a href="#features" className="hover:text-foreground transition-colors">
+                  <Link href="#" className="hover:text-foreground transition-colors">
                     Features
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#about" className="hover:text-foreground transition-colors">
-                    About Us
-                  </a>
+                  <Link href="#" className="hover:text-foreground transition-colors">
+                    Pricing
+                  </Link>
                 </li>
                 <li>
-                  <a href="#testimonials" className="hover:text-foreground transition-colors">
-                    Reviews
-                  </a>
+                  <Link href="#" className="hover:text-foreground transition-colors">
+                    API
+                  </Link>
                 </li>
                 <li>
-                  <a href="#contact" className="hover:text-foreground transition-colors">
-                    Contact
-                  </a>
+                  <Link href="#" className="hover:text-foreground transition-colors">
+                    Integrations
+                  </Link>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold text-foreground mb-4">Services</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Online Ordering</li>
-                <li>Home Delivery</li>
-                <li>Takeaway</li>
-                <li>Catering</li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">Contact Info</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  +91 98765 43210
+              <h4 className="font-semibold mb-4">Support</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                <li>
+                  <Link href="#" className="hover:text-foreground transition-colors">
+                    Help Center
+                  </Link>
                 </li>
-                <li className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  hello@pizzacraft.in
+                <li>
+                  <Link href="#" className="hover:text-foreground transition-colors">
+                    Contact Us
+                  </Link>
                 </li>
-                <li className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  Connaught Place, Delhi
+                <li>
+                  <Link href="#" className="hover:text-foreground transition-colors">
+                    Training
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-foreground transition-colors">
+                    Status
+                  </Link>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-border mt-8 pt-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              © 2024 PizzaCraft. All rights reserved. Made with ❤️ in Delhi.
-            </p>
+          <div className="border-t mt-8 pt-8 text-center text-muted-foreground">
+            <p>&copy; 2024 PizzaCraft. All rights reserved. Made with ❤️ in India</p>
           </div>
         </div>
       </footer>
