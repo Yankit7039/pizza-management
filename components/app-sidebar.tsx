@@ -170,7 +170,7 @@ export function AppSidebar() {
               </div>
             )}
 
-            <Link
+            {/* <Link
               href="/home"
               className={cn(
                 "w-full justify-start text-gray-400 hover:text-white hover:bg-gray-700",
@@ -188,7 +188,7 @@ export function AppSidebar() {
                 <LogOut className="h-5 w-5" />
                 {(open || openMobile) && <span className="ml-2">Sign out</span>}
               </Button>
-            </Link>
+            </Link> */}
           </div>
 
           {!isMobile && (
