@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Pizza, Users, TrendingUp, Globe, Star, MapPin, Phone, Mail, Play, ArrowRight } from "lucide-react";
-import { Link } from "wouter";
+import Link from "next/link";
 
 const features = [
   {
