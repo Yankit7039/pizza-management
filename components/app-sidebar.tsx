@@ -116,7 +116,7 @@ export function AppSidebar() {
           )}
         </Link>
 
-        <Link
+        {/* <Link
           href="/home"
           className={cn(
             "flex items-center px-2 py-2 mt-2 rounded-lg text-gray-300 hover:bg-gray-800 transition-colors",
@@ -125,7 +125,7 @@ export function AppSidebar() {
         >
           <Home className="h-5 w-5" />
           {(open || openMobile) && <span className="ml-3">Home</span>}
-        </Link>
+        </Link> */}
       </div>
 
       <div className="px-3 py-2 flex-1">

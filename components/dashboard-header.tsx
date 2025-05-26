@@ -103,23 +103,27 @@ export function DashboardHeader() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-gray-800" />
-            <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer flex items-center gap-2">
+            {/* <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer flex items-center gap-2">
               <User className="h-4 w-4" />
               <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              <span>Settings</span>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
+            <Link href="/dashboard/settings">
+              <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer flex items-center gap-2">
               <HelpCircle className="h-4 w-4" />
               <span>Help</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-gray-800" />
-            <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer flex items-center gap-2 text-red-400">
-              <LogOut className="h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
+            <Link href="/">
+              <DropdownMenuItem className="hover:bg-gray-800 cursor-pointer flex items-center gap-2 text-red-400">
+                <LogOut className="h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
