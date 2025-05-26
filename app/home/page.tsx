@@ -1,12 +1,9 @@
-"use client"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Pizza, Users, TrendingUp, Globe, Star, MapPin, Phone, Mail, Play, ArrowRight } from "lucide-react"
-import Link from "next/link"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Pizza, Users, TrendingUp, Globe, Star, MapPin, Phone, Mail, Play, ArrowRight } from "lucide-react";
+import { Link } from "wouter";
 
 const features = [
   {
@@ -29,7 +26,7 @@ const features = [
     title: "Multi-Location Support",
     description: "Manage multiple pizza outlets across different locations from one dashboard.",
   },
-]
+];
 
 const testimonials = [
   {
@@ -53,17 +50,17 @@ const testimonials = [
     rating: 5,
     comment: "Customer management has never been easier. We can track everything in real-time.",
   },
-]
+];
 
 const stats = [
   { number: "500+", label: "Pizza Outlets" },
   { number: "50,000+", label: "Daily Orders" },
   { number: "25+", label: "Cities Covered" },
   { number: "99.9%", label: "Uptime" },
-]
+];
 
-export default function HomePage() {
-  const [activeTab, setActiveTab] = useState("features")
+export function HomePage() {
+  const [activeTab, setActiveTab] = useState("features");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -90,15 +87,13 @@ export default function HomePage() {
               <Link href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
                 Contact
               </Link>
-              {/* <ThemeToggle /> */}
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* <ThemeToggle className="md:hidden" /> */}
-              <Link href="/auth/signin">
+              <Link href="/auth">
                 <Button variant="outline">Sign In</Button>
               </Link>
-              <Link href="/auth/signin">
+              <Link href="/auth">
                 <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
                   Get Started
                 </Button>
@@ -135,7 +130,7 @@ export default function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <Link href="/auth/signin">
+              <Link href="/auth">
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-lg px-8 py-6"
@@ -274,7 +269,7 @@ export default function HomePage() {
                 Join 500+ pizza outlets across India. Start your free trial today!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/auth/signin">
+                <Link href="/auth">
                   <Button
                     size="lg"
                     className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-lg px-8 py-6"
@@ -284,7 +279,8 @@ export default function HomePage() {
                   </Button>
                 </Link>
                 <Button size="lg" variant="outline" className="text-lg px-8 py-6">
-                  Schedule Demo
+                  <Phone className="w-5 h-5 mr-2" />
+                  Contact Sales
                 </Button>
               </div>
             </CardContent>
@@ -292,94 +288,75 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer id="contact" className="bg-muted/50 border-t">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
-                  <Pizza className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold">PizzaCraft</span>
-              </div>
-              <p className="text-muted-foreground mb-4 max-w-md">
-                Empowering pizza businesses across India with cutting-edge management solutions.
-              </p>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2 text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  <span>Connaught Place, New Delhi, India</span>
-                </div>
-                <div className="flex items-center space-x-2 text-muted-foreground">
-                  <Phone className="w-4 h-4" />
-                  <span>+91 11 4567 8900</span>
-                </div>
-                <div className="flex items-center space-x-2 text-muted-foreground">
-                  <Mail className="w-4 h-4" />
-                  <span>hello@pizzacraft.in</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>
-                  <Link href="#" className="hover:text-foreground transition-colors">
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground transition-colors">
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground transition-colors">
-                    API
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground transition-colors">
-                    Integrations
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>
-                  <Link href="#" className="hover:text-foreground transition-colors">
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground transition-colors">
-                    Contact Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground transition-colors">
-                    Training
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground transition-colors">
-                    Status
-                  </Link>
-                </li>
-              </ul>
-            </div>
+      {/* Contact Section */}
+      <section id="contact" className="py-20 bg-background border-t border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Get in Touch</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Ready to revolutionize your pizza business? Contact us today for a personalized demo.
+            </p>
           </div>
 
-          <div className="border-t mt-8 pt-8 text-center text-muted-foreground">
-            <p>&copy; 2024 PizzaCraft. All rights reserved. Made with ❤️ in India</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="text-center p-8">
+              <CardContent>
+                <Phone className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Phone</h3>
+                <p className="text-muted-foreground mb-4">Speak with our sales team</p>
+                <p className="font-semibold">+91 80 4567 8900</p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-8">
+              <CardContent>
+                <Mail className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Email</h3>
+                <p className="text-muted-foreground mb-4">Send us a message</p>
+                <p className="font-semibold">sales@pizzacraft.in</p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-8">
+              <CardContent>
+                <MapPin className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Office</h3>
+                <p className="text-muted-foreground mb-4">Visit our headquarters</p>
+                <p className="font-semibold">Bangalore, Karnataka</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-muted/30 py-12 border-t border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-2 mb-6">
+              <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
+                <Pizza className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                PizzaCraft
+              </span>
+            </div>
+            <p className="text-muted-foreground mb-6">
+              Empowering pizza businesses across India with cutting-edge management solutions.
+            </p>
+            <div className="flex justify-center space-x-8 text-sm text-muted-foreground">
+              <Link href="#" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+              <Link href="#" className="hover:text-foreground transition-colors">Terms of Service</Link>
+              <Link href="#" className="hover:text-foreground transition-colors">Support</Link>
+            </div>
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-sm text-muted-foreground">
+                © 2024 PizzaCraft. All rights reserved.
+              </p>
+            </div>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }

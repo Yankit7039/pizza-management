@@ -46,7 +46,7 @@ export function DashboardHeader() {
       </Button>
 
       {/* Desktop search */}
-      <div className="relative hidden md:flex flex-1 items-center gap-4 md:gap-8">
+      {/* <div className="relative hidden md:flex flex-1 items-center gap-4 md:gap-8">
         <form className="w-full max-w-xs">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
@@ -57,11 +57,11 @@ export function DashboardHeader() {
             />
           </div>
         </form>
-      </div>
+      </div> */}
 
       <div className="flex items-center gap-2">
         {/* Mobile search button */}
-        <Button
+        {/* <Button
           variant="ghost"
           size="icon"
           className="text-gray-400 hover:text-white md:hidden"
@@ -69,16 +69,18 @@ export function DashboardHeader() {
         >
           <Search className="h-5 w-5" />
           <span className="sr-only">Search</span>
-        </Button>
+        </Button> */}
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-gray-400 hover:text-white"
-        >
-          <Bell className="h-5 w-5" />
-          <span className="sr-only">Notifications</span>
-        </Button>
+        <Link href="/dashboard/notifications">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-gray-400 hover:text-white"
+          >
+            <Bell className="h-5 w-5" />
+            <span className="sr-only">Notifications</span>
+          </Button>
+        </Link>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

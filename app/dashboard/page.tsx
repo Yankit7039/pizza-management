@@ -17,6 +17,7 @@ import {
   ArrowDownRight,
   ChevronRight,
 } from "lucide-react"
+import Link from "next/link"
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts"
 
 const salesData = [
@@ -330,13 +331,15 @@ export default function Dashboard() {
                 Latest pizza orders
               </CardDescription>
             </div>
-            <Button
-              variant="ghost"
-              className="text-gray-400 hover:text-white"
-            >
-              View all
-              <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
+            <Link href="/dashboard/orders">
+              <Button
+                variant="ghost"
+                className="text-gray-400 hover:text-white"
+              >
+                View all
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">

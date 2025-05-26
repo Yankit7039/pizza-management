@@ -170,20 +170,25 @@ export function AppSidebar() {
               </div>
             )}
 
-            <Button
-              variant="ghost"
-              size="sm"
+            <Link
+              href="/home"
               className={cn(
                 "w-full justify-start text-gray-400 hover:text-white hover:bg-gray-700",
                 !open && !openMobile && "justify-center px-0"
               )}
-              onClick={() => {
-                // Sign out logic would go here
-              }}
             >
-              <LogOut className="h-5 w-5" />
-              {(open || openMobile) && <span className="ml-2">Sign out</span>}
-            </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full"
+                onClick={() => {
+                  // Sign out logic would go here
+                }}
+              >
+                <LogOut className="h-5 w-5" />
+                {(open || openMobile) && <span className="ml-2">Sign out</span>}
+              </Button>
+            </Link>
           </div>
 
           {!isMobile && (

@@ -211,8 +211,8 @@ export default function AnalyticsPage() {
             </CardTitle>
             <CardDescription>Peak hours analysis</CardDescription>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px]">
+          <CardContent className="h-[400px] w-[500px]">
+            <ChartContainer config={chartConfig} className="h-full w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={hourlyData}>
                   <XAxis dataKey="hour" />

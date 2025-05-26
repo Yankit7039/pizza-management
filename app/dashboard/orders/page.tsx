@@ -212,8 +212,8 @@ export default function OrdersPage() {
         <div className="flex gap-2">
           <Dialog open={isAddingOrder} onOpenChange={setIsAddingOrder}>
             <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
+              <Button className="bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90">
+                <Plus className="h-4 w-4 mr-2" />
                 New Order
               </Button>
             </DialogTrigger>
@@ -336,10 +336,13 @@ export default function OrdersPage() {
                 </div>
 
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setIsAddingOrder(false)}>
+                  <Button 
+                  variant="outline" onClick={() => setIsAddingOrder(false)}>
                     Cancel
                   </Button>
-                  <Button onClick={handleAddOrder}>Create Order</Button>
+                  <Button 
+                    className="bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90"
+                  onClick={handleAddOrder}>Create Order</Button>
                 </div>
               </div>
             </DialogContent>
